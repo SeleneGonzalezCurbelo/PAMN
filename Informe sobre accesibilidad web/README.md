@@ -10,8 +10,8 @@ Este repositorio contiene los resultados de la evaluación de accesibilidad de u
 
 # Observaciones
 - La evaluación de accesibilidad se realizó siguiendo las pautas establecidas por la WCAG.
-- Se empleó una herramienta de evaluación para complementar el estudio manual.
-- Los informes proporcionan detalles sobre los problemas de accesibilidad identificados, así como recomendaciones para su corrección.
+- Se empleó varias herramientas de evaluación para complementar el estudio manual.
+- El informe proporciona detalles sobre los problemas de accesibilidad identificados, así como recomendaciones para su corrección.
 
 # Documentación
 - https://www.w3.org/WAI/WCAG21/quickref/#principle2
