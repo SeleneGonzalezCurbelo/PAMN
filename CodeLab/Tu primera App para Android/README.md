@@ -48,13 +48,13 @@ Al principio, después de crear el proyecto de BusinessCard, se encontró un err
 ![error2](Images/error2.png)
 ![error3](Images/error3.png)
 
-### Solución
+## Solución
 
 Para resolver este problema, se modificó el archivo `build.gradle.kts` en el directorio de scripts (`scripts/build.gradle.kts`). Se actualizó la configuración de la API a la versión correcta y se sincronizó el proyecto. Esto permitió que la aplicación se compile y ejecute sin problemas.
 
 ![solution](Images/solution.png)
 
-## Instalación
+# Instalación
 
 1. Clona o descarga este repositorio.
 2. Abre el proyecto correspondiente en Android Studio.
