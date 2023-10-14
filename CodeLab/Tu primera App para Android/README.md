@@ -21,8 +21,8 @@ La aplicación de tarjeta de cumpleaños permite a los usuarios crear y personal
 
 ### Capturas de Pantalla
 
-![Preview](/Images/PreviewBirthdayCard.png)
-![Final](/Images/BirthdayCard.png)
+![Preview](Images/PreviewBirthdayCard.png)
+![Final](Images/BirthdayCard.png)
 
 # Tarjeta de presentación
 
@@ -33,8 +33,8 @@ La aplicación de tarjeta de presentación permite a los usuarios crear tarjetas
 
 ### Capturas de Pantalla
 
-![Preview](/Images/PreviewBusinessCard.png)
-![Final](/Images/BusinessCard.png)
+![Preview](Images/PreviewBusinessCard.png)
+![Final](Images/BusinessCard.png)
 
 # Dificultades técnicas
 
@@ -44,15 +44,15 @@ Durante el desarrollo de estos proyectos, se presento una dificultad técnica. A
 
 Al principio, después de crear el proyecto de BusinessCard, se encontró un error relacionado con la versión de la API. Esto impidió la compilación y ejecución adecuada de la aplicación.
 
-!(/Images/error1.png)
-!(/Images/error2.png)
-!(/Images/error3.png)
+![error1](/CodeLab/Tu-primera-App-para-Android/Images/error1.png)
+[error2](Images/error2.png)
+![error3](Images/error3.png)
 
 ### Solución
 
 Para resolver este problema, se modificó el archivo `build.gradle.kts` en el directorio de scripts (`scripts/build.gradle.kts`). Se actualizó la configuración de la API a la versión correcta y se sincronizó el proyecto. Esto permitió que la aplicación se compile y ejecute sin problemas.
 
-!(/Images/solution.png)
+![solution](/Images/solution.png)
 
 ## Instalación
 
