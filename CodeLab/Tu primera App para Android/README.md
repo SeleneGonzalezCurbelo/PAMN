@@ -5,11 +5,11 @@ Este repositorio contiene los códigos finales tras realizar el CodeLab: Unidad 
 Dos proyectos de aplicaciones Android desarrolladas en Android Studio: una aplicación de una tarjeta de cumpleaños y una aplicación de tarjeta de presentación.
 
 # Tabla de contenido
-- [Tarjeta de cumpleaños](#tarjetadecumpleaños)
-- [Tarjeta de presentación](#tarjetadepresentacion)
-- [Instalación](#instalacion)
+- [Tarjeta de cumpleaños](#tarjeta-de-cumpleaños)
+- [Tarjeta de presentación](#tarjeta-de-presentacion)
+- [Dificultades técnicas](#dificultades-técnicas)
+- [Instalación](#instalación)
 - [Documentación](#documentación)
-- [Dificultades técnicas](#dificultadestécnicas)
 - [Autor](#autor)
 
 # Tarjeta de cumpleaños
@@ -21,8 +21,8 @@ La aplicación de tarjeta de cumpleaños permite a los usuarios crear y personal
 
 ### Capturas de Pantalla
 
-![Captura 1](/ruta/b/captura1.png)
-![Captura 2](/ruta/b/captura2.png)
+![Preview](/Images/PreviewBirthdayCard.png)
+![Final](/Images/BirthdayCard.png)
 
 # Tarjeta de presentación
 
@@ -33,8 +33,26 @@ La aplicación de tarjeta de presentación permite a los usuarios crear tarjetas
 
 ### Capturas de Pantalla
 
-![Captura 1](/ruta/b/captura1.png)
-![Captura 2](/ruta/b/captura2.png)
+![Preview](/Images/PreviewBusinessCard.png)
+![Final](/Images/BusinessCard.png)
+
+# Dificultades técnicas
+
+Durante el desarrollo de estos proyectos, se presento una dificultad técnica. Al crear la aplicación de tarjeta de presentación (BusinessCard), surgió un error de versión de la API que causó problemas en la compilación.
+
+## Error de Versión de la API en BusinessCard
+
+Al principio, después de crear el proyecto de BusinessCard, se encontró un error relacionado con la versión de la API. Esto impidió la compilación y ejecución adecuada de la aplicación.
+
+!(/Images/error1.png)
+!(/Images/error2.png)
+!(/Images/error3.png)
+
+### Solución
+
+Para resolver este problema, se modificó el archivo `build.gradle.kts` en el directorio de scripts (`scripts/build.gradle.kts`). Se actualizó la configuración de la API a la versión correcta y se sincronizó el proyecto. Esto permitió que la aplicación se compile y ejecute sin problemas.
+
+!(/Images/solution.png)
 
 ## Instalación
 
@@ -45,9 +63,6 @@ La aplicación de tarjeta de presentación permite a los usuarios crear tarjetas
 # Documentación
 - [https://developer.android.com/courses/android-basics-compose/unit-](https://developer.android.com/courses/android-basics-compose/unit-1?hl=es-419)
   
-# Dificultades técnicas
-
-
 # Autor
 Este trabajo fue realizado como parte de un proyecto dirigido para la universidad por:
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
