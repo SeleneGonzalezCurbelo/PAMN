@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Animal")
 data class Animal (
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     val id: Int,
     @NonNull
     @ColumnInfo(name = "name")
@@ -17,19 +18,19 @@ data class Animal (
     val ageAnimal: Int,
     @NonNull
     @ColumnInfo(name = "sex")
-    val sexAniaml: String,
+    val sexAnimal: String,
     @NonNull
-    @ColumnInfo
+    @ColumnInfo(name = "state")
     val stateAnimal: String,
     @NonNull
     @ColumnInfo(name = "short_info")
     val shortInfoAnimal: String,
     @NonNull
     @ColumnInfo(name = "long_info")
-    val longInfoAniaml: String,
+    val longInfoAnimal: String,
     @NonNull
     @ColumnInfo(name = "breed")
-    val breedAnimal: TypeAnimal,
+    val breedAnimal: String,
     @NonNull
     @ColumnInfo(name = "type_animal")
     //Enumerado

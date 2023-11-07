@@ -10,12 +10,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.sirius.view.screens.AnimalsGallery
 import com.example.sirius.view.screens.generateSampleAnimalList
 import androidx.navigation.compose.composable
+import com.example.sirius.view.screens.AnimalViewModel
 import com.example.sirius.viewmodel.navigation.Destinations
 import com.example.sirius.viewmodel.navigation.Routes
 import com.example.sirius.viewmodel.navigation.createDestinations
@@ -43,7 +45,9 @@ fun NavigationContent(
                     HomeScreenPreview()
                 }
                 composable(Routes.ANIMALS) {
-                    AnimalsGallery(animalList = generateSampleAnimalList())
+                    val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+                    val animalList = generateSampleAnimalList(viewModel)
+                    AnimalsGallery(animalList = animalList)
                 }
 //                composable(Routes.DONATIONS) {}
 //                composable(Routes.ABOUTUS) {}

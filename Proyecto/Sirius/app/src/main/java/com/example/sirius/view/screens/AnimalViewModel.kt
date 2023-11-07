@@ -14,7 +14,7 @@ class AnimalViewModel(private val animalDao: AnimalDao) : ViewModel() {
     fun getAnimalByName(name: String): Flow<List<Animal>> = animalDao.getAnimalByName(name)
 
     companion object {
-        val factory : ViewModelProvider.Factory = viewModelFactory {
+        val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as AnimalApplication)
                 AnimalViewModel(application.database.animalDao())

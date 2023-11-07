@@ -78,7 +78,7 @@ dependencies {
     // Fragment
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
-    // ACtivity
+    // Activity
     implementation("androidx.activity:activity-compose:1.8.0")
 
     debugImplementation("androidx.compose.ui:ui-test-manifest")

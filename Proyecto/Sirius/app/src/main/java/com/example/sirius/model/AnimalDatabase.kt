@@ -21,7 +21,7 @@ abstract class AnimalDatabase: RoomDatabase() {
                     "app_database"
                 )
                     // Base de datos de inicialización
-                    .createFromAsset("database/animal.db")
+                    .createFromAsset("database/Animal.db")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also {
