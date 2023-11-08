@@ -3,6 +3,7 @@
 
     <!-- Navbar -->
     <string name="home">Home</string>
+    <string name="home2">Home2</string>
     <string name="animals">Animals</string>
     <string name="donations">Donations</string>
     <string name="aboutUs">About Us</string>

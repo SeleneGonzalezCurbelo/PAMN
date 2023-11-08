@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 
 class AnimalViewModel(private val animalDao: AnimalDao) : ViewModel() {
     fun getAllAnimals(): Flow<List<Animal>> = animalDao.getAllAnimals()
-    fun getAnimalByName(name: String): Flow<List<Animal>> = animalDao.getAnimalByName(name)
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
