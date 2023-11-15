@@ -11,11 +11,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -25,17 +22,22 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.sirius.view.screens.AnimalsGallery
-import com.example.sirius.view.screens.generateSampleAnimalList
 import androidx.navigation.compose.composable
 import com.example.sirius.viewmodel.navigation.AnimalViewModel
 import com.example.sirius.navigation.Destinations
 import com.example.sirius.navigation.Routes
 import com.example.sirius.navigation.createDestinations
-import com.example.sirius.view.screens.HomeScreenPreview
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.sirius.R
 import com.example.sirius.ui.theme.Black
 import com.example.sirius.ui.theme.Green3
-import kotlinx.coroutines.flow.firstOrNull
+import com.example.sirius.view.screens.AboutUsScreen
+import com.example.sirius.view.screens.AnimalInfo
+import com.example.sirius.view.screens.DonationsScreen
+import com.example.sirius.view.screens.HomeScreen
+import com.example.sirius.viewmodel.navigation.NewsViewModel
 
 @Composable
 fun NavigationContent(
@@ -44,9 +46,6 @@ fun NavigationContent(
     selectedDestination: String,
     navigateDestination: (Destinations) -> Unit
 ) {
-    val ageList by remember { mutableStateOf(emptyList<Int>()) }
-    val breedList by remember { mutableStateOf(emptyList<String>()) }
-    val typeList by remember { mutableStateOf(emptyList<String>()) }
 
     Row(
         modifier = modifier.fillMaxSize()
@@ -59,30 +58,50 @@ fun NavigationContent(
                 navController = navController,
                 startDestination = Routes.HOME
             ) {
-                composable(Routes.HOME) {
-                    HomeScreenPreview()
-                }
-                composable(Routes.ANIMALS) {
-                    val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
-                    val animalList = generateSampleAnimalList(viewModel)
+                composable(route = Routes.HOME) {
+                    //HomeScreenPreview()
+                    val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+                    val animalList by animalVm.getAllAnimals().collectAsState(initial = emptyList())
 
-                    val ageList by viewModel.getAge().collectAsState(emptyList<Int>())
+                    val newsVm: NewsViewModel = viewModel(factory = NewsViewModel.factory)
+                    val newsList by newsVm.getNews().collectAsState(initial = emptyList())
+
+                    val imageList = listOf(
+                        R.drawable.dog1,
+                        R.drawable.dog1,
+                        R.drawable.dog1,
+                        R.drawable.dog1,
+                    )
+                    HomeScreen(animalList = animalList, newsList = newsList, imageList = imageList)
+                }
+                composable(route = Routes.ANIMALS) {
+                    val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+
+                    val ageList by viewModel.getAge().collectAsState(emptyList())
                     val breedList by viewModel.getBreed().collectAsState(emptyList())
                     val typeList by viewModel.getTypeAnimal().collectAsState(emptyList())
 
                     AnimalsGallery(
-                        animalList = animalList,
+                        navController = navController,
                         ageList = ageList,
                         breedList = breedList,
                         typeList = typeList
                     )
                 }
 
-                composable(Routes.DONATIONS) {
-                    HomeScreenPreview()
+                composable(route = Routes.DONATIONS) {
+                    DonationsScreen()
                 }
-                composable(Routes.ABOUTUS) {
-                    HomeScreenPreview()
+                composable(route = Routes.ABOUTUS) {
+                    AboutUsScreen()
+                }
+                composable(route = Routes.ANIMALINFO + "/{id}",
+                    arguments = listOf(navArgument(name = "id") {
+                        type = NavType.IntType
+                    })) {
+                    val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+
+                    AnimalInfo(navController, it.arguments?.getInt("id"), viewModel)
                 }
             }
             Navbar(
@@ -92,6 +111,7 @@ fun NavigationContent(
         }
     }
 }
+
 
 @Composable
 fun Navbar(
@@ -142,8 +162,6 @@ fun Navbar(
     }
 }
 
-
-
 class NavigationActions(private val navController: NavHostController) {
     fun navigateTo(destination: Destinations) {
         navController.navigate(destination.route) {
@@ -154,4 +172,3 @@ class NavigationActions(private val navController: NavHostController) {
         }
     }
 }
-

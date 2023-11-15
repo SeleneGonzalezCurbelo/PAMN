@@ -34,7 +34,7 @@ data class Animal (
     @NonNull
     @ColumnInfo(name = "type_animal")
     //Enumerado
-    val typeAnimal: String,
+    val typeAnimal: TypeAnimal,
     @NonNull
     @ColumnInfo(name = "time_shelter")
     val timeShelter: Int,

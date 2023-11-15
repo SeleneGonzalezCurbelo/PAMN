@@ -35,4 +35,5 @@ object Routes {
     const val ANIMALS = "animals"
     const val DONATIONS = "donations"
     const val ABOUTUS = "about us"
+    const val ANIMALINFO = "animal info"
 }

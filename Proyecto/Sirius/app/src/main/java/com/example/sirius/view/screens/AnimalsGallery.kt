@@ -52,20 +52,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.sirius.R
 import com.example.sirius.model.Animal
+import com.example.sirius.model.TypeAnimal
+import com.example.sirius.navigation.Routes
 import com.example.sirius.ui.theme.Gold
 import com.example.sirius.ui.theme.Green1
 import com.example.sirius.viewmodel.navigation.AnimalViewModel
 
 @Composable
 fun AnimalsGallery(
-    animalList: List<Animal>,
+    navController: NavController,
     ageList: List<Int>,
     breedList: List<String>,
     typeList: List<String>
 ) {
+
     val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+
 
     var selectedAge by remember { mutableStateOf("") }
     var selectedBreed by remember { mutableStateOf("") }
@@ -107,7 +112,7 @@ fun AnimalsGallery(
 
             DropdownButton(
                 text = "Breed",
-                options = breedList.map { it.toString() },
+                options = breedList.map { it },
                 selectedOption = selectedBreed,
                 onOptionSelected = { selectedBreed = it },
                 expanded = breedDropdownExpanded,
@@ -126,7 +131,7 @@ fun AnimalsGallery(
 
             DropdownButton(
                 text = "Type",
-                options = typeList.map { it.toString() },
+                options = typeList.map { it },
                 selectedOption = selectedType,
                 onOptionSelected = { selectedType = it },
                 expanded = typeDropdownExpanded,
@@ -147,7 +152,7 @@ fun AnimalsGallery(
         val animalsByAge = if (selectedAge.isNotBlank()) {
             val age = selectedAge.toIntOrNull()
             if (age != null) {
-                viewModel.getAnimalsByAgeASC(selectedAge.toInt()).collectAsState(emptyList()).value
+                viewModel.getAnimalsByAgeASC(age).collectAsState(emptyList()).value
             } else {
                 emptyList()
             }
@@ -170,18 +175,21 @@ fun AnimalsGallery(
         val filteredAnimals = animalsByAge.intersect(animalsByBreed.toSet()).intersect(animalsByType.toSet())
 
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             items(filteredAnimals.chunked(2)) { chunk ->
                 LazyRow(
                     contentPadding = PaddingValues(20.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     items(chunk) { animal ->
-                        AnimalCard(animal = animal)
+                        AnimalCard(
+                            animal = animal,
+                            navController = navController,
+                        ) /*{
+                           // navController.navigate(AnimalInfoScreen.AnimalInfo.route)
+                        }*/
                     }
                 }
             }
@@ -220,7 +228,7 @@ fun DropdownButton(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     viewModel: AnimalViewModel,
-    originalText: String // Add originalText parameter
+    originalText: String
 ) {
     Box {
         Button(
@@ -232,7 +240,7 @@ fun DropdownButton(
             colors = ButtonDefaults.buttonColors(Gold),
             contentPadding = PaddingValues(5.dp)
         ) {
-            Text(text = if (selectedOption.isNotBlank()) selectedOption else originalText)
+            Text(text = selectedOption.ifBlank { originalText })
         }
 
         DropdownMenu(
@@ -256,31 +264,20 @@ fun DropdownButton(
                         when (text) {
                             "Age" -> {
                                 if (option.isNotBlank()) {
-                                    val result = viewModel.getAnimalsByAgeASC(option.toInt())
-                                    println("Consulta por edad: $result")
-                                } else {
-                                    println("La opción seleccionada está vacía")
+                                    viewModel.getAnimalsByAgeASC(option.toInt())
                                 }
                             }
 
                             "Breed" -> {
                                 if (option.isNotBlank()) {
-                                    val result = viewModel.getAnimalsByBreed(option)
-                                    println("Consulta por raza: $result")
-                                } else {
-                                    println("La opción seleccionada está vacía")
+                                    viewModel.getAnimalsByBreed(option)
                                 }
-
                             }
 
                             "Type" -> {
                                 if (option.isNotBlank()) {
-                                    val result = viewModel.getAnimalsByTypeAnimal(option)
-                                    println("Consulta por tipo: $result")
-                                } else {
-                                    println("La opción seleccionada está vacía")
+                                    viewModel.getAnimalsByTypeAnimal(option)
                                 }
-
                             }
                         }
                         onOptionSelected(option)
@@ -294,7 +291,11 @@ fun DropdownButton(
 
 
 @Composable
-fun AnimalCard(animal: Animal) {
+fun AnimalCard(animal: Animal,
+               navController: NavController,
+              // onNavigateToInfoAnimal: () -> Unit
+        ) {
+
     var isFavorite by remember { mutableStateOf(false) }
 
     Card(
@@ -317,13 +318,25 @@ fun AnimalCard(animal: Animal) {
                 modifier = Modifier
                     .padding(4.dp)
             ) {
+                val imageResource = when (animal.typeAnimal) {
+                    TypeAnimal.DOG -> R.drawable.dog1
+                    TypeAnimal.CAT -> R.drawable.cat1
+                    TypeAnimal.BIRD -> R.drawable.bird1
+                    else -> {
+                        R.drawable.dog1
+                    }
+                }
+
                 Image(
-                    painter = painterResource(id = R.drawable.dog1),
+                    painter = painterResource(id = imageResource),
                     contentDescription = animal.shortInfoAnimal,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(1f)
+                        .clickable {
+                            navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
+                        }
                 )
                 if (isFavorite) {
                     Icon(
@@ -331,7 +344,7 @@ fun AnimalCard(animal: Animal) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier.align(Alignment.TopEnd)
-                            .clickable {isFavorite = !isFavorite}
+                            .clickable { isFavorite = !isFavorite }
                     )
                 } else {
                     Icon(
@@ -339,11 +352,10 @@ fun AnimalCard(animal: Animal) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier.align(Alignment.TopEnd)
-                            .clickable {isFavorite = !isFavorite}
+                            .clickable { isFavorite = !isFavorite }
                     )
                 }
             }
-
             Text(
                 text = animal.shortInfoAnimal,
                 style = MaterialTheme.typography.bodyMedium,
@@ -354,59 +366,61 @@ fun AnimalCard(animal: Animal) {
     }
 }
 
-@Composable
-fun generateSampleAnimalList(viewModel: AnimalViewModel): List<Animal> {
-    val animalList by viewModel.getAllAnimals().collectAsState(emptyList())
-    return animalList.map { animal ->
-        Animal(
-            id = animal.id,
-            nameAnimal = animal.nameAnimal,
-            ageAnimal = animal.ageAnimal,
-            sexAnimal = animal.sexAnimal,
-            stateAnimal = animal.stateAnimal,
-            shortInfoAnimal = animal.shortInfoAnimal,
-            longInfoAnimal = animal.longInfoAnimal,
-            breedAnimal = animal.breedAnimal,
-            typeAnimal = animal.typeAnimal,
-            timeShelter = animal.timeShelter
-        )
-    }
-}
 
-@Composable
-fun MyComposable(viewModel: AnimalViewModel) {
-    val ages by viewModel.getAge().collectAsState(emptyList())
-    val breeds by viewModel.getBreed().collectAsState(emptyList())
-    val typeAnimals by viewModel.getTypeAnimal().collectAsState(emptyList())
+//@Composable
+//fun generateSampleAnimalList(viewModel: AnimalViewModel): List<Animal> {
+//    val animalList by viewModel.getAllAnimals().collectAsState(emptyList())
+//    return animalList.map { animal ->
+//        Animal(
+//            id = animal.id,
+//            nameAnimal = animal.nameAnimal,
+//            ageAnimal = animal.ageAnimal,
+//            sexAnimal = animal.sexAnimal,
+//            stateAnimal = animal.stateAnimal,
+//            shortInfoAnimal = animal.shortInfoAnimal,
+//            longInfoAnimal = animal.longInfoAnimal,
+//            breedAnimal = animal.breedAnimal,
+//            typeAnimal = animal.typeAnimal,
+//            timeShelter = animal.timeShelter
+//        )
+//    }
+//}
+//
+//@Composable
+//fun MyComposable(viewModel: AnimalViewModel) {
+//    val ages by viewModel.getAge().collectAsState(emptyList())
+//    val breeds by viewModel.getBreed().collectAsState(emptyList())
+//    val typeAnimals by viewModel.getTypeAnimal().collectAsState(emptyList())
+//
+//    val animalsByAge = viewModel.getAnimalsByAgeASC(2).collectAsState(emptyList()).value
+//    val animalsByBreed = viewModel.getAnimalsByBreed("Siamese").collectAsState(emptyList()).value
+//    val animalsByType = viewModel.getAnimalsByTypeAnimal("DOG").collectAsState(emptyList()).value
+//
+//    LazyColumn {
+//
+//        items(animalsByAge) { animal ->
+//            AnimalItem(animal)
+//        }
+//    }
+//}
+////
+////
+//@Composable
+//fun AnimalItem(animal: Animal) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(16.dp),
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(16.dp)
+//        ) {
+//            Text(text = "Tipo: ${animal.typeAnimal}")
+//            Text(text = "Edad: ${animal.ageAnimal}")
+//            Text(text = "Raza: ${animal.breedAnimal}")
+//        }
+//    }
+//}
 
-    val animalsByAge = viewModel.getAnimalsByAgeASC(2).collectAsState(emptyList()).value
-    val animalsByBreed = viewModel.getAnimalsByBreed("Siamese").collectAsState(emptyList()).value
-    val animalsByType = viewModel.getAnimalsByTypeAnimal("DOG").collectAsState(emptyList()).value
-
-    LazyColumn {
-
-        items(animalsByAge) { animal ->
-            AnimalItem(animal)
-        }
-    }
-}
-
-
-@Composable
-fun AnimalItem(animal: com.example.sirius.model.Animal) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Text(text = "Edad: ${animal.typeAnimal}")
-            Text(text = "Edad: ${animal.ageAnimal}")
-            Text(text = "Edad: ${animal.breedAnimal}")
-        }
-    }
-}

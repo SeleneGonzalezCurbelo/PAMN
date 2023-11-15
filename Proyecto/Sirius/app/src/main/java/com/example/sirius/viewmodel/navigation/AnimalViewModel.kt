@@ -17,8 +17,11 @@ class AnimalViewModel(private val animalDao: AnimalDao) : ViewModel() {
     fun getTypeAnimal(): Flow<List<String>> = animalDao.getTypeAnimal()
 
     fun getAnimalsByAgeASC(option: Int): Flow<List<Animal>> = animalDao.getAnimalsByAgeASC(option)
+
     fun getAnimalsByBreed(option: String): Flow<List<Animal>> = animalDao.getAnimalsByBreed(option)
     fun getAnimalsByTypeAnimal(option: String): Flow<List<Animal>> = animalDao.getAnimalsByTypeAnimal(option)
+
+    fun getAnimalById(option: Int): Flow<Animal?> = animalDao.getAnimalById(option)
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
