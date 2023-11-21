@@ -15,28 +15,28 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import com.example.sirius.view.screens.AnimalsGallery
 import androidx.navigation.compose.composable
-import com.example.sirius.viewmodel.navigation.AnimalViewModel
+import androidx.navigation.navArgument
+import com.example.sirius.R
 import com.example.sirius.navigation.Destinations
 import com.example.sirius.navigation.Routes
 import com.example.sirius.navigation.createDestinations
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import com.example.sirius.R
 import com.example.sirius.ui.theme.Black
 import com.example.sirius.ui.theme.Green3
 import com.example.sirius.view.screens.AboutUsScreen
 import com.example.sirius.view.screens.AnimalInfo
+import com.example.sirius.view.screens.AnimalsGallery
 import com.example.sirius.view.screens.DonationsScreen
 import com.example.sirius.view.screens.HomeScreen
+import com.example.sirius.viewmodel.navigation.AnimalViewModel
 import com.example.sirius.viewmodel.navigation.NewsViewModel
 
 @Composable
@@ -72,7 +72,7 @@ fun NavigationContent(
                         R.drawable.dog1,
                         R.drawable.dog1,
                     )
-                    HomeScreen(animalList = animalList, newsList = newsList, imageList = imageList)
+                    HomeScreen(navController = navController, animalList = animalList, newsList = newsList, imageList = imageList)
                 }
                 composable(route = Routes.ANIMALS) {
                     val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)

@@ -1,5 +1,6 @@
 package com.example.sirius.view.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,12 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.sirius.R
-import com.example.sirius.model.TypeAnimal
 import com.example.sirius.viewmodel.navigation.AnimalViewModel
 
 @Composable
@@ -49,23 +49,30 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
         ) {
             item {
                 if (animal != null) {
-                    val imageResource = when (animal!!.typeAnimal) {
-                        TypeAnimal.DOG -> R.drawable.dog1
-                        TypeAnimal.CAT -> R.drawable.cat1
-                        TypeAnimal.BIRD -> R.drawable.bird1
-                        else -> {
-                            R.drawable.dog1
-                        }
-                    }
+                    val context = LocalContext.current
 
-                    Image(
-                        painter = painterResource(id = imageResource),
-                        contentDescription = animal!!.longInfoAnimal,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .aspectRatio(1f)
+                    // Obtener el nombre del recurso sin la ruta
+                    val resourceName = animal!!.photoAnimal.substringAfterLast("/")
+
+                    // Obtener el ID del recurso sin la ruta
+                    val resourceId = context.resources.getIdentifier(
+                        resourceName.replace(".jpg", ""), "drawable", context.packageName
                     )
+
+                    if (resourceId != 0) {
+                        // Si se encontró el recurso, cargar la imagen
+                        val painter = painterResource(id = resourceId)
+                        Image(
+                            painter = painter,
+                            contentDescription = animal!!.longInfoAnimal,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .aspectRatio(1f)
+                        )
+                    } else {
+                        Log.e("AnimalImage", "Recurso no encontrado para ${animal!!.photoAnimal}")
+                    }
                 }
             }
             item {

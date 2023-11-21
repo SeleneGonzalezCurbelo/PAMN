@@ -1,6 +1,8 @@
 package com.example.sirius.view.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,25 +15,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.sirius.R
-import com.example.sirius.model.News
 import com.example.sirius.model.Animal
-import com.example.sirius.viewmodel.navigation.AnimalViewModel
-import com.example.sirius.viewmodel.navigation.NewsViewModel
+import com.example.sirius.model.News
+import com.example.sirius.navigation.Routes
 
 @Composable
-fun HomeScreen(animalList: List<Animal>, newsList: List<News>, imageList: List<Int>) {
+fun HomeScreen(
+    navController: NavController,
+    animalList: List<Animal>,
+    newsList: List<News>,
+    imageList: List<Int>
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -42,7 +46,7 @@ fun HomeScreen(animalList: List<Animal>, newsList: List<News>, imageList: List<I
             item {
                 // What's up
                 Text(
-                    text = stringResource(id = R.string.animalsIntro),
+                    text = stringResource(id = R.string.newsIntro),
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(6.dp)
                 )
@@ -77,15 +81,33 @@ fun HomeScreen(animalList: List<Animal>, newsList: List<News>, imageList: List<I
                     items(animalList) {animal ->
                         Column(
                             modifier = Modifier.padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.dog1),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(MaterialTheme.shapes.medium)
+                            val context = LocalContext.current
+
+                            // Obtener el nombre del recurso sin la ruta
+                            val resourceName = animal.photoAnimal.substringAfterLast("/")
+
+                            // Obtener el ID del recurso sin la ruta
+                            val resourceId = context.resources.getIdentifier(
+                                resourceName.replace(".jpg", ""), "drawable", context.packageName
                             )
+
+                            if (resourceId != 0) {
+                                // Si se encontró el recurso, cargar la imagen
+                                val painter = painterResource(id = resourceId)
+                                Image(
+                                    painter = painter,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(100.dp)
+                                    .clickable {
+                                        navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
+                                    }
+                                )
+                            } else {
+                                Log.e("AnimalImage", "Recurso no encontrado para ${animal.photoAnimal}")
+                            }
                             Text(
                                 text = animal.nameAnimal,
                                 style = MaterialTheme.typography.labelLarge,
@@ -119,15 +141,24 @@ fun HomeScreen(animalList: List<Animal>, newsList: List<News>, imageList: List<I
                     modifier = Modifier.padding(6.dp)
                 )
                 LazyRow {
-                    items(imageList) {imageResource ->
-                        Image(
-                            painter = painterResource(imageResource),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(100.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                        )
+                    items(newsList) {new ->
+                        Column(
+                            modifier = Modifier.padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.dog1),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(MaterialTheme.shapes.medium)
+                            )
+                            Text(
+                                text = new.titleNews,
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
@@ -161,21 +192,21 @@ fun HomeScreen(animalList: List<Animal>, newsList: List<News>, imageList: List<I
 //    }
 //}
 
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    val imageList = listOf(
-        R.drawable.dog1,
-        R.drawable.dog1,
-        R.drawable.dog1,
-        R.drawable.dog1,
-    )
-
-    val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
-    val animalList by animalVm.getAllAnimals().collectAsState(initial = emptyList())
-
-    val newsVm: NewsViewModel = viewModel(factory = NewsViewModel.factory)
-    val newsList by newsVm.getNews().collectAsState(initial = emptyList())
-
-    HomeScreen(animalList, newsList, imageList)
-}
+//@Preview
+//@Composable
+//fun HomeScreenPreview() {
+//    val imageList = listOf(
+//        R.drawable.dog1,
+//        R.drawable.dog1,
+//        R.drawable.dog1,
+//        R.drawable.dog1,
+//    )
+//
+//    val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+//    val animalList by animalVm.getAllAnimals().collectAsState(initial = emptyList())
+//
+//    val newsVm: NewsViewModel = viewModel(factory = NewsViewModel.factory)
+//    val newsList by newsVm.getNews().collectAsState(initial = emptyList())
+//
+//    HomeScreen(animalList, newsList, imageList)
+//}

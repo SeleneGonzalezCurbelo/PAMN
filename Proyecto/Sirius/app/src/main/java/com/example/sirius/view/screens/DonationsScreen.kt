@@ -1,5 +1,6 @@
 package com.example.sirius.view.screens
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,9 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sirius.R
 import com.example.sirius.ui.theme.SiriusTheme
+import com.example.sirius.viewmodel.navigation.ContactsViewModel
 
 @Composable
 fun DonationsScreen() {
+    val viewModelContacts = remember { ContactsViewModel() }
+
+    Log.d("DonationsScreen", "DonationsScreen recomposed")
+
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -61,11 +69,14 @@ fun DonationsScreen() {
         }
         item {
             DonationButton(
-                onClick = { /* Handle PayPal donation */ },
+                onClick = {
+                    viewModelContacts.changeBackgroundColor()
+                          },
                 imageResIdLeft = R.drawable.paypal_logo,
                 buttonText = "Donate with PayPal"
             )
         }
+
         item {
             DonationButton(
                 onClick = { /* Handle debit/credit card donation */ },

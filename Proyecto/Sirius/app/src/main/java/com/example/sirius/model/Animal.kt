@@ -38,6 +38,9 @@ data class Animal (
     @NonNull
     @ColumnInfo(name = "time_shelter")
     val timeShelter: Int,
+    @NonNull
+    @ColumnInfo(name = "photo_animal")
+    val photoAnimal: String
     //@NonNull
     //@ColumnInfo(name = "medical_record")
     //val medicalRecordAnimal: String,
@@ -45,3 +48,4 @@ data class Animal (
     //@ColumnInfo(name = "image")
     //val imageAnimal: String,
 )
+

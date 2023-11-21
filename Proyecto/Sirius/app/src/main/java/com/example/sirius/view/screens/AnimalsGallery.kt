@@ -1,5 +1,6 @@
 package com.example.sirius.view.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,14 +49,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.sirius.R
 import com.example.sirius.model.Animal
-import com.example.sirius.model.TypeAnimal
 import com.example.sirius.navigation.Routes
 import com.example.sirius.ui.theme.Gold
 import com.example.sirius.ui.theme.Green1
@@ -163,13 +163,13 @@ fun AnimalsGallery(
         val animalsByBreed = if (selectedBreed.isNotBlank()) {
             viewModel.getAnimalsByBreed(selectedBreed).collectAsState(emptyList()).value
         } else {
-            viewModel.getAllAnimals().collectAsState(emptyList()).value // Otra acción apropiada si no se ha seleccionado una raza
+            viewModel.getAllAnimals().collectAsState(emptyList()).value
         }
 
         val animalsByType = if (selectedType.isNotBlank()) {
             viewModel.getAnimalsByTypeAnimal(selectedType).collectAsState(emptyList()).value
         } else {
-            viewModel.getAllAnimals().collectAsState(emptyList()).value// Otra acción apropiada si no se ha seleccionado un tipo
+            viewModel.getAllAnimals().collectAsState(emptyList()).value
         }
 
         val filteredAnimals = animalsByAge.intersect(animalsByBreed.toSet()).intersect(animalsByType.toSet())
@@ -187,9 +187,7 @@ fun AnimalsGallery(
                         AnimalCard(
                             animal = animal,
                             navController = navController,
-                        ) /*{
-                           // navController.navigate(AnimalInfoScreen.AnimalInfo.route)
-                        }*/
+                        )
                     }
                 }
             }
@@ -318,26 +316,33 @@ fun AnimalCard(animal: Animal,
                 modifier = Modifier
                     .padding(4.dp)
             ) {
-                val imageResource = when (animal.typeAnimal) {
-                    TypeAnimal.DOG -> R.drawable.dog1
-                    TypeAnimal.CAT -> R.drawable.cat1
-                    TypeAnimal.BIRD -> R.drawable.bird1
-                    else -> {
-                        R.drawable.dog1
-                    }
-                }
+                val context = LocalContext.current
 
-                Image(
-                    painter = painterResource(id = imageResource),
-                    contentDescription = animal.shortInfoAnimal,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .aspectRatio(1f)
-                        .clickable {
-                            navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
-                        }
+                // Obtener el nombre del recurso sin la ruta
+                val resourceName = animal.photoAnimal.substringAfterLast("/")
+
+                // Obtener el ID del recurso sin la ruta
+                val resourceId = context.resources.getIdentifier(
+                    resourceName.replace(".jpg", ""), "drawable", context.packageName
                 )
+
+                if (resourceId != 0) {
+                    // Si se encontró el recurso, cargar la imagen
+                    val painter = painterResource(id = resourceId)
+                    Image(
+                        painter = painter,
+                        contentDescription = animal.shortInfoAnimal,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .clickable {
+                                navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
+                            }
+                    )
+                } else {
+                    Log.e("AnimalImage", "Recurso no encontrado para ${animal.photoAnimal}")
+                }
                 if (isFavorite) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
