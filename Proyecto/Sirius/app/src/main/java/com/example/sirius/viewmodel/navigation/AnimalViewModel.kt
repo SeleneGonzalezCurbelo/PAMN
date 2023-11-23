@@ -5,18 +5,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sirius.AnimalApplication
-import com.example.sirius.model.Animal
 import com.example.sirius.data.AnimalDao
+import com.example.sirius.model.Animal
 import kotlinx.coroutines.flow.Flow
 
 class AnimalViewModel(private val animalDao: AnimalDao) : ViewModel() {
     fun getAllAnimals(): Flow<List<Animal>> = animalDao.getAllAnimals()
 
-    fun getAge(): Flow<List<Int>> = animalDao.getAge()
+    fun getAllAnimalsOrderedByDaysEntryDate(): Flow<List<Animal>> = animalDao.getAllAnimals()
+
+    fun getBirthYears(): Flow<List<String>> = animalDao.getBirthYears()
     fun getBreed(): Flow<List<String>> = animalDao.getBreed()
     fun getTypeAnimal(): Flow<List<String>> = animalDao.getTypeAnimal()
 
-    fun getAnimalsByAgeASC(option: Int): Flow<List<Animal>> = animalDao.getAnimalsByAgeASC(option)
+    fun getAnimalsByAgeDesc(birthDate: String): Flow<List<Animal>> = animalDao.getAnimalsByAgeDesc(birthDate)
 
     fun getAnimalsByBreed(option: String): Flow<List<Animal>> = animalDao.getAnimalsByBreed(option)
     fun getAnimalsByTypeAnimal(option: String): Flow<List<Animal>> = animalDao.getAnimalsByTypeAnimal(option)

@@ -69,6 +69,7 @@ dependencies {
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     implementation("androidx.benchmark:benchmark-macro:1.2.0")
     implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
+    implementation("com.google.android.libraries.places:places:3.3.0")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
 
     // ViewModel

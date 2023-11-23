@@ -19,32 +19,35 @@ interface AnimalDao {
     @Delete
     suspend fun deleteAnimal(animal: Animal)
 
-    @Query("SELECT * from Animal ORDER BY time_shelter DESC")
+    @Query("SELECT * from Animal")
     fun getAllAnimals(): Flow<List<Animal>>
 
-    @Query("SELECT * FROM Animal WHERE name = :name ORDER BY time_shelter DESC")
+    @Query("SELECT * FROM Animal ORDER BY entry_date DESC")
+    fun getAllAnimalsOrderedByDaysEntryDate(): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE name = :name ORDER BY entry_date DESC")
     fun getAnimalByName(name: String): Flow<List<Animal>>
 
     @Query("SELECT * FROM Animal WHERE id = :id")
     fun getAnimalById(id: Int): Flow<Animal?>
 
-    @Query("SELECT * FROM Animal WHERE time_shelter = :timeShelter ORDER BY time_shelter DESC")
-    fun getAnimalByTimeShelter(timeShelter: String): Flow<List<Animal>>
+    @Query("SELECT * FROM Animal WHERE entry_date = :entryDate ORDER BY entry_date DESC")
+    fun getAnimalByTimeShelter(entryDate: String): Flow<List<Animal>>
 
-    @Query("SELECT * FROM Animal WHERE type_animal = :typeAnimal ORDER BY time_shelter DESC")
+    @Query("SELECT * FROM Animal WHERE type_animal = :typeAnimal ORDER BY entry_date DESC")
     fun getAnimalByTypeAnimal(typeAnimal: String): Flow<List<Animal>>
 
-    @Query("SELECT * FROM Animal WHERE breed = :breed ORDER BY time_shelter DESC")
+    @Query("SELECT * FROM Animal WHERE breed = :breed ORDER BY entry_date DESC")
     fun getAnimalByBreed(breed: String): Flow<List<Animal>>
 
-    @Query("SELECT * FROM Animal WHERE age = :age ORDER BY age ASC")
-    fun getAnimalsByAgeASC(age: Int): Flow<List<Animal>>
+    @Query("SELECT * FROM Animal WHERE birth_date = :birthDate ORDER BY birth_date ASC")
+    fun getAnimalsByAgeASC(birthDate: Int): Flow<List<Animal>>
 
-    @Query("SELECT DISTINCT age FROM Animal ORDER BY age ASC")
-    fun getAge(): Flow<List<Int>>
+    @Query("SELECT * FROM Animal WHERE SUBSTR(birth_date, 1, 4) = :year ORDER BY birth_date DESC")
+    fun getAnimalsByAgeDesc(year: String): Flow<List<Animal>>;
 
-    @Query("SELECT * FROM Animal WHERE age = :age ORDER BY age DESC")
-    fun getAnimalsByAgeDesc(age: Int): Flow<List<Animal>>
+    @Query("SELECT DISTINCT SUBSTR(birth_date, 1, 4) AS birth_year FROM Animal ORDER BY birth_year ASC")
+    fun getBirthYears(): Flow<List<String>>
 
     @Query("SELECT * FROM Animal WHERE breed = :breed")
     fun getAnimalsByBreed(breed: String): Flow<List<Animal>>

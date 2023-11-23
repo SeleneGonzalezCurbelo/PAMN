@@ -1,5 +1,7 @@
 package com.example.sirius.view.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +41,7 @@ import com.example.sirius.view.screens.HomeScreen
 import com.example.sirius.viewmodel.navigation.AnimalViewModel
 import com.example.sirius.viewmodel.navigation.NewsViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationContent(
     modifier: Modifier = Modifier,
@@ -61,7 +64,7 @@ fun NavigationContent(
                 composable(route = Routes.HOME) {
                     //HomeScreenPreview()
                     val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
-                    val animalList by animalVm.getAllAnimals().collectAsState(initial = emptyList())
+                    val animalList by animalVm.getAllAnimalsOrderedByDaysEntryDate().collectAsState(initial = emptyList())
 
                     val newsVm: NewsViewModel = viewModel(factory = NewsViewModel.factory)
                     val newsList by newsVm.getNews().collectAsState(initial = emptyList())
@@ -77,7 +80,7 @@ fun NavigationContent(
                 composable(route = Routes.ANIMALS) {
                     val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
 
-                    val ageList by viewModel.getAge().collectAsState(emptyList())
+                    val ageList by viewModel.getBirthYears().collectAsState(emptyList())
                     val breedList by viewModel.getBreed().collectAsState(emptyList())
                     val typeList by viewModel.getTypeAnimal().collectAsState(emptyList())
 

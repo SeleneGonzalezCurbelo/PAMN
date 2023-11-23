@@ -1,6 +1,9 @@
 package com.example.sirius.view.screens
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,26 +54,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.sirius.model.Animal
 import com.example.sirius.navigation.Routes
 import com.example.sirius.ui.theme.Gold
 import com.example.sirius.ui.theme.Green1
+import com.example.sirius.ui.theme.Orange
 import com.example.sirius.viewmodel.navigation.AnimalViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnimalsGallery(
     navController: NavController,
-    ageList: List<Int>,
+    ageList: List<String>,
     breedList: List<String>,
     typeList: List<String>
 ) {
 
     val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
-
 
     var selectedAge by remember { mutableStateOf("") }
     var selectedBreed by remember { mutableStateOf("") }
@@ -92,7 +99,7 @@ fun AnimalsGallery(
             horizontalArrangement = Arrangement.Center
         ) {
             DropdownButton(
-                text = "Age",
+                text = "Arrival year",
                 options = ageList.map { it.toString() },
                 selectedOption = selectedAge,
                 onOptionSelected = { selectedAge = it },
@@ -101,7 +108,7 @@ fun AnimalsGallery(
                     ageDropdownExpanded = expanded
                 },
                 viewModel = viewModel,
-                originalText = "Age"
+                originalText = "Arrival year"
             )
 
             ClearFilterIconButton(
@@ -150,9 +157,9 @@ fun AnimalsGallery(
         }
 
         val animalsByAge = if (selectedAge.isNotBlank()) {
-            val age = selectedAge.toIntOrNull()
+            val age = selectedAge
             if (age != null) {
-                viewModel.getAnimalsByAgeASC(age).collectAsState(emptyList()).value
+                viewModel.getAnimalsByAgeDesc(age).collectAsState(emptyList()).value
             } else {
                 emptyList()
             }
@@ -195,6 +202,8 @@ fun AnimalsGallery(
     }
 }
 
+
+
 @Composable
 fun ClearFilterIconButton(
     onClick: () -> Unit,
@@ -217,6 +226,7 @@ fun ClearFilterIconButton(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DropdownButton(
     text: String,
@@ -260,11 +270,14 @@ fun DropdownButton(
                     },
                     onClick = {
                         when (text) {
-                            "Age" -> {
+                            "Arrival year" -> {
                                 if (option.isNotBlank()) {
-                                    viewModel.getAnimalsByAgeASC(option.toInt())
+                                    val year = getYearFromStringDate(option)
+                                    print(year)
+                                    viewModel.getAnimalsByAgeDesc(year)
                                 }
                             }
+
 
                             "Breed" -> {
                                 if (option.isNotBlank()) {
@@ -288,10 +301,10 @@ fun DropdownButton(
 }
 
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun AnimalCard(animal: Animal,
                navController: NavController,
-              // onNavigateToInfoAnimal: () -> Unit
         ) {
 
     var isFavorite by remember { mutableStateOf(false) }
@@ -361,14 +374,61 @@ fun AnimalCard(animal: Animal,
                     )
                 }
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                val adoptionText = if (animal.waitingAdoption == 1) {
+                    "Adoption"
+                } else {
+                    "Pre Adoption"
+                }
+
+                Text(
+                    text = adoptionText,
+                    style = TextStyle(
+                        fontSize = 10.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier
+                        .background(color = Orange, shape = RoundedCornerShape(4.dp))
+                        .padding(horizontal = 2.dp, vertical = 4.dp)
+                )
+
+                if (animal.fosterCare == 1) {
+                    Text(
+                        text = "In Foster Care",
+                        style = TextStyle(
+                            fontSize = 10.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier
+                            .background(color = Orange, shape = RoundedCornerShape(4.dp))
+                            .padding(horizontal = 2.dp, vertical = 4.dp)
+                    )
+                }
+            }
+
             Text(
                 text = animal.shortInfoAnimal,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.CenterHorizontally)
             )
         }
     }
+}
+
+fun getYearFromStringDate(dateString: String): String {
+    // Extrae los primeros cuatro caracteres de la cadena (el año)
+    return dateString.take(4)
 }
 
 
