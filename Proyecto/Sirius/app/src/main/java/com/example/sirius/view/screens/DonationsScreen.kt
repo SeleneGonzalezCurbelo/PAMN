@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,16 +29,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.sirius.R
-import com.example.sirius.ui.theme.SiriusTheme
+import com.example.sirius.navigation.Routes
 import com.example.sirius.viewmodel.navigation.ContactsViewModel
 
 @Composable
-fun DonationsScreen() {
+fun DonationsScreen(navController: NavHostController) {
     val viewModelContacts = remember { ContactsViewModel() }
 
     Log.d("DonationsScreen", "DonationsScreen recomposed")
@@ -70,8 +69,8 @@ fun DonationsScreen() {
         item {
             DonationButton(
                 onClick = {
-                    viewModelContacts.changeBackgroundColor()
-                          },
+                    navController.navigate(route = Routes.LOADING + "/" + 1)
+                },
                 imageResIdLeft = R.drawable.paypal_logo,
                 buttonText = "Donate with PayPal"
             )
@@ -79,14 +78,18 @@ fun DonationsScreen() {
 
         item {
             DonationButton(
-                onClick = { /* Handle debit/credit card donation */ },
+                onClick = {
+                    navController.navigate(route = Routes.LOADING + "/" + 1)
+                },
                 imageResIdLeft = R.drawable.mastercard_logo,
                 buttonText = "Donate with Debit or Credit Card"
             )
         }
         item {
             DonationButton(
-                onClick = { /* Handle Bizum donation */ },
+                onClick = {
+                    navController.navigate(route = Routes.LOADING + "/" + 1)
+                },
                 imageResIdLeft = R.drawable.bizum_logo,
                 buttonText = "Donate with Bizum"
             )
@@ -156,12 +159,12 @@ fun DonationsText(@StringRes textResourceId: Int, style: androidx.compose.ui.tex
     )
 }
 
-@Preview
-@Composable
-fun DonationsScreenPreview() {
-    SiriusTheme {
-        Surface {
-            DonationsScreen()
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun DonationsScreenPreview() {
+//    SiriusTheme {
+//        Surface {
+//            DonationsScreen()
+//        }
+//    }
+//}

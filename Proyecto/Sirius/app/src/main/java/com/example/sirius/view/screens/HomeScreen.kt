@@ -34,7 +34,7 @@ fun HomeScreen(
     navController: NavController,
     animalList: List<Animal>,
     newsList: List<News>,
-    imageList: List<Int>
+    imageList: List<Int>,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -44,7 +44,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             item {
-                // What's up
+                // What's New
                 Text(
                     text = stringResource(id = R.string.newsIntro),
                     style = MaterialTheme.typography.headlineMedium,
@@ -56,13 +56,34 @@ fun HomeScreen(
                             modifier = Modifier.padding(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Image(
+                            val context = LocalContext.current
+
+                            // Obtener el nombre del recurso sin la ruta
+                            val resourceName = news.photoNew.substringAfterLast("/")
+
+                            // Obtener el ID del recurso sin la ruta
+                            val resourceId = context.resources.getIdentifier(
+                                resourceName.replace(".jpg", ""), "drawable", context.packageName
+                            )
+
+                            if (resourceId != 0) {
+                                // Si se encontró el recurso, cargar la imagen
+                                val painter = painterResource(id = resourceId)
+                                Image(
+                                    painter = painter,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(100.dp)
+                                )
+                            } else {
+                                Log.e("AnimalImage", "Recurso no encontrado para ${news.photoNew}")
+                            }
+                            /*Image(
                                 painter = painterResource(R.drawable.dog1),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clip(MaterialTheme.shapes.medium)
-                            )
+                            )*/
                             Text(
                                 text = news.titleNews,
                                 style = MaterialTheme.typography.labelLarge,

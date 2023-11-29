@@ -36,4 +36,6 @@ object Routes {
     const val DONATIONS = "donations"
     const val ABOUTUS = "about us"
     const val ANIMALINFO = "animal info"
+    const val LOADING = "loading"
+    const val LANDING = "landing"
 }

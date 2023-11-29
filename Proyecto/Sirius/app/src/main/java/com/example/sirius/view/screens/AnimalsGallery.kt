@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,9 +23,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -180,29 +180,27 @@ fun AnimalsGallery(
         }
 
         val filteredAnimals = animalsByAge.intersect(animalsByBreed.toSet()).intersect(animalsByType.toSet())
+        println("filteredAnimals: ${filteredAnimals}")
+        val columns = 2 // Número de columnas en el grid
 
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
             modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(filteredAnimals.chunked(2)) { chunk ->
-                LazyRow(
-                    contentPadding = PaddingValues(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(chunk) { animal ->
-                        AnimalCard(
-                            animal = animal,
-                            navController = navController,
-                        )
-                    }
+            items(filteredAnimals.size) { index ->
+                val animal = filteredAnimals.elementAtOrNull(index)
+                animal?.let { animal ->
+                    AnimalCard(
+                        animal = animal,
+                        navController = navController
+                    )
                 }
             }
         }
     }
 }
-
-
 
 @Composable
 fun ClearFilterIconButton(
@@ -300,33 +298,38 @@ fun DropdownButton(
     }
 }
 
-
 @SuppressLint("DiscouragedApi")
 @Composable
 fun AnimalCard(animal: Animal,
                navController: NavController,
-        ) {
+) {
 
     var isFavorite by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f),
+            .aspectRatio(0.65f)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .clickable {
+                navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
+            },
         colors = CardDefaults.cardColors(
             containerColor = Green1,
         ),
         border = BorderStroke(2.dp, Gold),
         shape = MaterialTheme.shapes.medium,
+
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .width(152.dp)
-                .clip(MaterialTheme.shapes.medium)
+                .clip(MaterialTheme.shapes.medium),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
                 modifier = Modifier
+                    .weight(1f)
                     .padding(4.dp)
             ) {
                 val context = LocalContext.current
@@ -349,9 +352,6 @@ fun AnimalCard(animal: Animal,
                         modifier = Modifier
                             .fillMaxSize()
                             .aspectRatio(1f)
-                            .clickable {
-                                navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
-                            }
                     )
                 } else {
                     Log.e("AnimalImage", "Recurso no encontrado para ${animal.photoAnimal}")
@@ -374,33 +374,20 @@ fun AnimalCard(animal: Animal,
                     )
                 }
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            Spacer(Modifier.padding(8.dp))
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                // Texto de adopción
                 val adoptionText = if (animal.waitingAdoption == 1) {
                     "Adoption"
                 } else {
                     "Pre Adoption"
                 }
-
-                Text(
-                    text = adoptionText,
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    modifier = Modifier
-                        .background(color = Orange, shape = RoundedCornerShape(4.dp))
-                        .padding(horizontal = 2.dp, vertical = 4.dp)
-                )
-
-                if (animal.fosterCare == 1) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "In Foster Care",
+                        text = adoptionText,
                         style = TextStyle(
                             fontSize = 10.sp,
                             color = Color.White,
@@ -410,21 +397,36 @@ fun AnimalCard(animal: Animal,
                             .background(color = Orange, shape = RoundedCornerShape(4.dp))
                             .padding(horizontal = 2.dp, vertical = 4.dp)
                     )
-                }
-            }
 
-            Text(
-                text = animal.shortInfoAnimal,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+                    if (animal.fosterCare == 1) {
+                        Text(
+                            text = "In Foster Care",
+                            style = TextStyle(
+                                fontSize = 10.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            modifier = Modifier
+                                .background(color = Orange, shape = RoundedCornerShape(4.dp))
+                                .padding(horizontal = 2.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Text(
+                    text = animal.shortInfoAnimal,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
         }
     }
 }
+
 
 fun getYearFromStringDate(dateString: String): String {
     // Extrae los primeros cuatro caracteres de la cadena (el año)

@@ -1,5 +1,7 @@
 package com.example.sirius.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.sirius.view.components.NavigationActions
 import com.example.sirius.view.components.NavigationContent
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationController (){
     Surface(
@@ -19,14 +22,20 @@ fun NavigationController (){
         color = MaterialTheme.colorScheme.background
     ) {
         val navController = rememberNavController()
+        println("navController")
         val navigateAction = remember(navController) {
             NavigationActions(navController)
         }
+        println("navigateAction")
+
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val selectedDestination = navBackStackEntry?.destination?.route ?: Routes.HOME
+        println("navBackStackEntry")
 
+        val selectedDestination = navBackStackEntry?.destination?.route ?: Routes.HOME
+        println("antes de entrar en NavigationContent")
         NavigationContent(
+            modifier = Modifier,
             navController = navController,
             selectedDestination = selectedDestination,
             navigateDestination = navigateAction::navigateTo

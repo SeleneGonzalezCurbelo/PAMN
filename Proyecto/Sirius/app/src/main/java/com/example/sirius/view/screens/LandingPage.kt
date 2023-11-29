@@ -25,14 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.sirius.R
+import com.example.sirius.navigation.Routes
 import com.example.sirius.ui.theme.Gold
 
 @Composable
-fun LandingPage() {
+fun LandingPage(navController: NavController) {
     Surface(
         color = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize()
@@ -78,9 +79,9 @@ fun LandingPage() {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RoundButton("Login / Sign Up")
+                RoundButton("Login / Sign Up", navController)
                 Spacer(modifier = Modifier.height(15.dp))
-                RoundButton("Join as a guest")
+                RoundButton("Join as a guest", navController)
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
@@ -88,9 +89,9 @@ fun LandingPage() {
 }
 
 @Composable
-fun RoundButton(text: String) {
+fun RoundButton(text: String, navController: NavController) {
     Button(
-        onClick = { /* Acción cuando se hace clic en el botón */ },
+        onClick = { navController.navigate(route = Routes.HOME) },
         modifier = Modifier.width(219.dp)
             .size(30.dp),
         shape = MaterialTheme.shapes.large,
@@ -106,10 +107,4 @@ fun RoundButton(text: String) {
 
         )
     }
-}
-
-@Composable
-@Preview
-fun LandingPagePreview() {
-    LandingPage()
 }

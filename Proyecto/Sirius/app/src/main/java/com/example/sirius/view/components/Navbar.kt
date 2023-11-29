@@ -38,6 +38,8 @@ import com.example.sirius.view.screens.AnimalInfo
 import com.example.sirius.view.screens.AnimalsGallery
 import com.example.sirius.view.screens.DonationsScreen
 import com.example.sirius.view.screens.HomeScreen
+import com.example.sirius.view.screens.LandingPage
+import com.example.sirius.view.screens.LoadingPage
 import com.example.sirius.viewmodel.navigation.AnimalViewModel
 import com.example.sirius.viewmodel.navigation.NewsViewModel
 
@@ -47,7 +49,7 @@ fun NavigationContent(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     selectedDestination: String,
-    navigateDestination: (Destinations) -> Unit
+    navigateDestination: (Destinations) -> Unit,
 ) {
 
     Row(
@@ -59,8 +61,31 @@ fun NavigationContent(
             NavHost(
                 modifier = Modifier.weight(1f),
                 navController = navController,
-                startDestination = Routes.HOME
+                startDestination = Routes.LOADING
             ) {
+                /*composable(
+                    route = Routes.LOADING + "/{id}",
+                    arguments = listOf(navArgument(name = "id") {
+                        type = NavType.IntType
+                        defaultValue = -1 // Valor predeterminado en caso de que no se proporcione un valor
+                    })
+                ) { navBackStackEntry ->
+                    val id = navBackStackEntry.arguments?.getInt("id") ?: -1
+                    LoadingPage(navController, id)
+                }*/
+                composable(route = Routes.LOADING){
+                    LoadingPage(navController = navController, 0)
+                }
+                composable(route = Routes.LOADING + "/{id}",
+                    arguments = listOf(navArgument(name = "id") {
+                        type = NavType.IntType
+                        defaultValue = -1
+                    })
+                ) { navBackStackEntry ->
+                    val id = navBackStackEntry.arguments?.getInt("id") ?: -1
+                    LoadingPage(navController, id)
+                }
+
                 composable(route = Routes.HOME) {
                     //HomeScreenPreview()
                     val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
@@ -93,10 +118,13 @@ fun NavigationContent(
                 }
 
                 composable(route = Routes.DONATIONS) {
-                    DonationsScreen()
+                    DonationsScreen(navController)
                 }
                 composable(route = Routes.ABOUTUS) {
                     AboutUsScreen()
+                }
+                composable(route = Routes.LANDING){
+                    LandingPage(navController)
                 }
                 composable(route = Routes.ANIMALINFO + "/{id}",
                     arguments = listOf(navArgument(name = "id") {
@@ -107,10 +135,13 @@ fun NavigationContent(
                     AnimalInfo(navController, it.arguments?.getInt("id"), viewModel)
                 }
             }
-            Navbar(
-                selectedDestination = selectedDestination,
-                navigateDestination = navigateDestination,
-            )
+            val currentRoute = navController.currentBackStackEntry?.destination?.route
+            if (currentRoute !in listOf(Routes.LOADING, Routes.LANDING, Routes.LOADING + "/{id}")) {
+                Navbar(
+                    selectedDestination = selectedDestination,
+                    navigateDestination = navigateDestination,
+                )
+            }
         }
     }
 }

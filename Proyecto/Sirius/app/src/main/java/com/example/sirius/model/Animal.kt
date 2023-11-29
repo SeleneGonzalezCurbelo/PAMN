@@ -1,13 +1,9 @@
 package com.example.sirius.model
 
-import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 @Entity(tableName = "Animal")
 data class Animal (
@@ -48,20 +44,4 @@ data class Animal (
     @NonNull
     @ColumnInfo(name = "photo_animal")
     val photoAnimal: String
-) {
-    @SuppressLint("NewApi")
-    fun getDaysSinceShelter(): Long {
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val shelterDate = LocalDate.parse(entryDate.toString(), dateFormatter)
-        val currentDate = LocalDate.now()
-        return ChronoUnit.DAYS.between(shelterDate, currentDate)
-    }
-
-    @SuppressLint("NewApi")
-    fun getDaysSinceShelter2(): Long {
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val shelterDate = LocalDate.parse(birthDate.toString(), dateFormatter)
-        val currentDate = LocalDate.now()
-        return ChronoUnit.DAYS.between(shelterDate, currentDate)
-    }
-}
+) 
