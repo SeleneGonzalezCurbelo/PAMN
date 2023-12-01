@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.sirius.data.dao.AnimalDao
+import com.example.sirius.data.dao.NewsDao
+import com.example.sirius.data.dao.UserDao
 import com.example.sirius.model.Animal
 import com.example.sirius.model.News
 import com.example.sirius.model.User

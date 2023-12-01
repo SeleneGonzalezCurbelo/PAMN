@@ -66,7 +66,7 @@ import com.example.sirius.navigation.Routes
 import com.example.sirius.ui.theme.Gold
 import com.example.sirius.ui.theme.Green1
 import com.example.sirius.ui.theme.Orange
-import com.example.sirius.viewmodel.navigation.AnimalViewModel
+import com.example.sirius.viewmodel.AnimalViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -108,7 +108,8 @@ fun AnimalsGallery(
                     ageDropdownExpanded = expanded
                 },
                 viewModel = viewModel,
-                originalText = "Arrival year"
+                originalText = "Arrival year",
+                color = Color.White,
             )
 
             ClearFilterIconButton(
@@ -127,7 +128,8 @@ fun AnimalsGallery(
                     breedDropdownExpanded = expanded
                 },
                 viewModel = viewModel,
-                originalText = "Breed"
+                originalText = "Breed",
+                color = Color.White,
             )
 
             ClearFilterIconButton(
@@ -146,7 +148,8 @@ fun AnimalsGallery(
                     typeDropdownExpanded = expanded
                 },
                 viewModel = viewModel,
-                originalText = "Type"
+                originalText = "Type",
+                color = Color.White,
             )
 
             ClearFilterIconButton(
@@ -234,7 +237,8 @@ fun DropdownButton(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     viewModel: AnimalViewModel,
-    originalText: String
+    originalText: String,
+    color: Color,
 ) {
     Box {
         Button(
@@ -246,7 +250,10 @@ fun DropdownButton(
             colors = ButtonDefaults.buttonColors(Gold),
             contentPadding = PaddingValues(5.dp)
         ) {
-            Text(text = selectedOption.ifBlank { originalText })
+            Text(
+                text = selectedOption.ifBlank { originalText },
+                color = color
+            )
         }
 
         DropdownMenu(
@@ -320,7 +327,7 @@ fun AnimalCard(animal: Animal,
         border = BorderStroke(2.dp, Gold),
         shape = MaterialTheme.shapes.medium,
 
-    ) {
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -432,62 +439,3 @@ fun getYearFromStringDate(dateString: String): String {
     // Extrae los primeros cuatro caracteres de la cadena (el año)
     return dateString.take(4)
 }
-
-
-//@Composable
-//fun generateSampleAnimalList(viewModel: AnimalViewModel): List<Animal> {
-//    val animalList by viewModel.getAllAnimals().collectAsState(emptyList())
-//    return animalList.map { animal ->
-//        Animal(
-//            id = animal.id,
-//            nameAnimal = animal.nameAnimal,
-//            ageAnimal = animal.ageAnimal,
-//            sexAnimal = animal.sexAnimal,
-//            stateAnimal = animal.stateAnimal,
-//            shortInfoAnimal = animal.shortInfoAnimal,
-//            longInfoAnimal = animal.longInfoAnimal,
-//            breedAnimal = animal.breedAnimal,
-//            typeAnimal = animal.typeAnimal,
-//            timeShelter = animal.timeShelter
-//        )
-//    }
-//}
-//
-//@Composable
-//fun MyComposable(viewModel: AnimalViewModel) {
-//    val ages by viewModel.getAge().collectAsState(emptyList())
-//    val breeds by viewModel.getBreed().collectAsState(emptyList())
-//    val typeAnimals by viewModel.getTypeAnimal().collectAsState(emptyList())
-//
-//    val animalsByAge = viewModel.getAnimalsByAgeASC(2).collectAsState(emptyList()).value
-//    val animalsByBreed = viewModel.getAnimalsByBreed("Siamese").collectAsState(emptyList()).value
-//    val animalsByType = viewModel.getAnimalsByTypeAnimal("DOG").collectAsState(emptyList()).value
-//
-//    LazyColumn {
-//
-//        items(animalsByAge) { animal ->
-//            AnimalItem(animal)
-//        }
-//    }
-//}
-////
-////
-//@Composable
-//fun AnimalItem(animal: Animal) {
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp)
-//        ) {
-//            Text(text = "Tipo: ${animal.typeAnimal}")
-//            Text(text = "Edad: ${animal.ageAnimal}")
-//            Text(text = "Raza: ${animal.breedAnimal}")
-//        }
-//    }
-//}
-

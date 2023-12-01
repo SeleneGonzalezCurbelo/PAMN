@@ -90,6 +90,9 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:1.0.0")
     implementation("com.google.android.gms:play-services-maps:18.0.2")
 
+    //JSON
+    implementation("com.google.code.gson:gson:2.8.9")
+
     // Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

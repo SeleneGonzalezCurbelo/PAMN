@@ -28,5 +28,5 @@ data class News (
     @ColumnInfo(name = "until_date")
     val untilDate: String?,
     @ColumnInfo(name = "photo_new")
-    val photoNew: String
+    val photoNews: String
 )

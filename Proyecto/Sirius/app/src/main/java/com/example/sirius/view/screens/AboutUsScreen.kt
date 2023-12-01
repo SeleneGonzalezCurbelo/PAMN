@@ -1,4 +1,3 @@
-package com.example.sirius.view.screens
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -25,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,7 +37,6 @@ fun SectionTitle(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.headlineMedium,
-        color = Color.Black,
         modifier = Modifier.padding(bottom = 8.dp)
     )
 }
@@ -79,12 +76,10 @@ fun LocationCard(location: String) {
             Text(
                 text = "Location",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.Black
             )
             Text(
                 text = location,
                 style = MaterialTheme.typography.labelLarge,
-                color = Color.Black
             )
 
             // Mapa de Google
@@ -126,22 +121,22 @@ fun AboutUsScreen() {
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    item {
-                        RoundedImage(imageRes = R.drawable.dog1)
-                    }
-                    item {
-                        RoundedImage(imageRes = R.drawable.dog1)
-                    }
-                    item {
-                        RoundedImage(imageRes = R.drawable.dog1)
-                    }
-                    item {
-                        // Add another image (replace R.drawable.dog1 with the appropriate resource)
-                        RoundedImage(imageRes = R.drawable.dog1)
-                    }
+            ) {
+                item {
+                    RoundedImage(imageRes = R.drawable.dog1)
+                }
+                item {
+                    RoundedImage(imageRes = R.drawable.dog1)
+                }
+                item {
+                    RoundedImage(imageRes = R.drawable.dog1)
+                }
+                item {
+                    // Add another image (replace R.drawable.dog1 with the appropriate resource)
+                    RoundedImage(imageRes = R.drawable.dog1)
                 }
             }
+        }
 
         item {
             LocationCard("Our shelter is located at XYZ Street, City, Country.")
@@ -179,7 +174,6 @@ fun JustifiedText(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
-        color = Color.Black,
         modifier = Modifier
             .fillMaxWidth()
             .padding(end = 16.dp), // Agrega un relleno a la derecha para el espacio deseado
@@ -187,10 +181,3 @@ fun JustifiedText(text: String) {
     )
     Spacer(modifier = Modifier.padding(10.dp))
 }
-
-
-//Text(
-//text = text,
-//style = MaterialTheme.typography.labelLarge,
-//color = Color.Black
-//)

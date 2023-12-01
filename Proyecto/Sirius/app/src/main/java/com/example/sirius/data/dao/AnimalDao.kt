@@ -1,0 +1,63 @@
+package com.example.sirius.data.dao
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import com.example.sirius.model.Animal
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface AnimalDao {
+    @Insert
+    suspend fun insertAnimal(animal: Animal)
+
+    @Update
+    suspend fun updateAnimal(animal: Animal)
+
+    @Delete
+    suspend fun deleteAnimal(animal: Animal)
+
+    @Query("SELECT * from Animal")
+    fun getAllAnimals(): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal ORDER BY entry_date DESC")
+    fun getAllAnimalsOrderedByDaysEntryDate(): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE name = :name ORDER BY entry_date DESC")
+    fun getAnimalByName(name: String): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE id = :id")
+    fun getAnimalById(id: Int): Flow<Animal?>
+
+    @Query("SELECT * FROM Animal WHERE entry_date = :entryDate ORDER BY entry_date DESC")
+    fun getAnimalByTimeShelter(entryDate: String): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE type_animal = :typeAnimal ORDER BY entry_date DESC")
+    fun getAnimalByTypeAnimal(typeAnimal: String): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE breed = :breed ORDER BY entry_date DESC")
+    fun getAnimalByBreed(breed: String): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE birth_date = :birthDate ORDER BY birth_date ASC")
+    fun getAnimalsByAgeASC(birthDate: Int): Flow<List<Animal>>
+
+    @Query("SELECT * FROM Animal WHERE SUBSTR(birth_date, 1, 4) = :year ORDER BY birth_date DESC")
+    fun getAnimalsByAgeDesc(year: String): Flow<List<Animal>>;
+
+    @Query("SELECT DISTINCT SUBSTR(birth_date, 1, 4) AS birth_year FROM Animal ORDER BY birth_year ASC")
+    fun getBirthYears(): Flow<List<String>>
+
+    @Query("SELECT * FROM Animal WHERE breed = :breed")
+    fun getAnimalsByBreed(breed: String): Flow<List<Animal>>
+
+    @Query("SELECT DISTINCT breed FROM Animal")
+    fun getBreed(): Flow<List<String>>
+
+    @Query("SELECT * FROM Animal WHERE type_animal = :typeAnimal")
+    fun getAnimalsByTypeAnimal(typeAnimal: String): Flow<List<Animal>>
+
+    @Query("SELECT DISTINCT type_animal FROM Animal")
+    fun getTypeAnimal(): Flow<List<String>>
+}

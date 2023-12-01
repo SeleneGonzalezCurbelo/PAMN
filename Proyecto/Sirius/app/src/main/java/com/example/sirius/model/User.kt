@@ -24,4 +24,7 @@ data class User(
     //Enumerado
     val role: String,
     // Image, Favourites
-)
+) {
+    constructor(username: String, email: String, password: String, role: String)
+            : this(0, username, email, password, role) //null id
+}

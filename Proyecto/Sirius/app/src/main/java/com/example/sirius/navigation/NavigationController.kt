@@ -13,30 +13,27 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.sirius.view.components.NavigationActions
 import com.example.sirius.view.components.NavigationContent
+import com.example.sirius.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavigationController (){
+fun NavigationController (userViewModel: UserViewModel){
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         val navController = rememberNavController()
-        println("navController")
         val navigateAction = remember(navController) {
             NavigationActions(navController)
         }
-        println("navigateAction")
-
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        println("navBackStackEntry")
-
         val selectedDestination = navBackStackEntry?.destination?.route ?: Routes.HOME
-        println("antes de entrar en NavigationContent")
+
         NavigationContent(
             modifier = Modifier,
             navController = navController,
+            userViewModel = userViewModel,
             selectedDestination = selectedDestination,
             navigateDestination = navigateAction::navigateTo
         )

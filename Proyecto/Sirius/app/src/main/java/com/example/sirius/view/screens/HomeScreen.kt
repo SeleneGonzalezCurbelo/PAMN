@@ -1,5 +1,6 @@
 package com.example.sirius.view.screens
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,16 +26,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sirius.R
-import com.example.sirius.model.Animal
 import com.example.sirius.model.News
+import com.example.sirius.model.Animal
 import com.example.sirius.navigation.Routes
+import com.example.sirius.viewmodel.UserViewModel
 
+@SuppressLint("CoroutineCreationDuringComposition", "DiscouragedApi")
 @Composable
 fun HomeScreen(
     navController: NavController,
     animalList: List<Animal>,
     newsList: List<News>,
     imageList: List<Int>,
+    userViewModel: UserViewModel
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -53,13 +57,13 @@ fun HomeScreen(
                 LazyRow {
                     items(newsList) {news ->
                         Column(
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier.padding(4.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             val context = LocalContext.current
 
                             // Obtener el nombre del recurso sin la ruta
-                            val resourceName = news.photoNew.substringAfterLast("/")
+                            val resourceName = news.photoNews.substringAfterLast("/")
 
                             // Obtener el ID del recurso sin la ruta
                             val resourceId = context.resources.getIdentifier(
@@ -75,15 +79,15 @@ fun HomeScreen(
                                     modifier = Modifier.size(100.dp)
                                 )
                             } else {
-                                Log.e("AnimalImage", "Recurso no encontrado para ${news.photoNew}")
+                                Log.e("AnimalImage", "Recurso no encontrado para ${news.photoNews}")
                             }
-                            /*Image(
-                                painter = painterResource(R.drawable.dog1),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(MaterialTheme.shapes.medium)
-                            )*/
+//                            Image(
+//                                painter = painterResource(R.drawable.dog1),
+//                                contentDescription = null,
+//                                modifier = Modifier
+//                                    .size(100.dp)
+//                                    .clip(MaterialTheme.shapes.medium)
+//                            )
                             Text(
                                 text = news.titleNews,
                                 style = MaterialTheme.typography.labelLarge,
@@ -101,10 +105,10 @@ fun HomeScreen(
                 LazyRow {
                     items(animalList) {animal ->
                         Column(
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier.padding(4.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
 
-                        ) {
+                            ) {
                             val context = LocalContext.current
 
                             // Obtener el nombre del recurso sin la ruta
@@ -121,10 +125,12 @@ fun HomeScreen(
                                 Image(
                                     painter = painter,
                                     contentDescription = null,
-                                    modifier = Modifier.size(100.dp)
-                                    .clickable {
-                                        navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
-                                    }
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .size(100.dp)
+                                        .clickable {
+                                            navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
+                                        }
                                 )
                             } else {
                                 Log.e("AnimalImage", "Recurso no encontrado para ${animal.photoAnimal}")
@@ -164,7 +170,7 @@ fun HomeScreen(
                 LazyRow {
                     items(newsList) {new ->
                         Column(
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier.padding(4.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Image(
@@ -186,48 +192,3 @@ fun HomeScreen(
         }
     }
 }
-
-//@Composable
-//fun NewsItem(news: News) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(bottom = 16.dp)
-//    ) {
-//        Text(
-//            text = news.titleNews,
-//            style = MaterialTheme.typography.headlineSmall,
-//            fontWeight = FontWeight.Bold,
-//            modifier = Modifier.fillMaxWidth()
-//        )
-//        Text(
-//            text = news.shortInfoNews,
-//            style = MaterialTheme.typography.bodySmall,
-//            modifier = Modifier.fillMaxWidth()
-//        )
-//        Text(
-//            text = "Published Date: ${news.publishedDate}",
-////            style = MaterialTheme.typography.caption,
-//            modifier = Modifier.fillMaxWidth()
-//        )
-//    }
-//}
-
-//@Preview
-//@Composable
-//fun HomeScreenPreview() {
-//    val imageList = listOf(
-//        R.drawable.dog1,
-//        R.drawable.dog1,
-//        R.drawable.dog1,
-//        R.drawable.dog1,
-//    )
-//
-//    val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
-//    val animalList by animalVm.getAllAnimals().collectAsState(initial = emptyList())
-//
-//    val newsVm: NewsViewModel = viewModel(factory = NewsViewModel.factory)
-//    val newsList by newsVm.getNews().collectAsState(initial = emptyList())
-//
-//    HomeScreen(animalList, newsList, imageList)
-//}

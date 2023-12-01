@@ -2,7 +2,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.sirius.data.AnimalDao
+import com.example.sirius.data.dao.AnimalDao
 import com.example.sirius.data.SiriusDatabase
 import com.example.sirius.model.Animal
 import com.example.sirius.model.TypeAnimal

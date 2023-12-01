@@ -1,6 +1,8 @@
 package com.example.sirius.navigation
 
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.example.sirius.R
 
 @Composable
@@ -16,11 +18,18 @@ fun createDestination(route: String, selectedIcon: Int, iconTextId: Int): Destin
 @Composable
 fun createDestinations(): List<Destinations> {
     return listOf(
-        createDestination(Routes.HOME, R.drawable.home_icon_, R.string.home),
-        createDestination(Routes.ANIMALS, R.drawable.animal_icon_, R.string.animals),
-        createDestination(Routes.DONATIONS, R.drawable.donation_icon_, R.string.donations),
-        createDestination(Routes.ABOUTUS, R.drawable.about_us_icon_, R.string.aboutUs),
+        createDestination(Routes.HOME, R.drawable.home_icon, R.string.home),
+        createDestination(Routes.ANIMALS, R.drawable.animals_icon, R.string.animals),
+        createDestination(Routes.DONATIONS, R.drawable.donations_icon, R.string.donations),
+        createDestination(Routes.ABOUTUS, R.drawable.aboutus_icon, R.string.aboutUs),
     )
+}
+
+@Composable
+private fun getIcon(lightIcon: Int, darkIcon: Int): Int {
+    val isSystemInDarkTheme =
+        (LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    return if (!isSystemInDarkTheme) darkIcon else lightIcon
 }
 
 data class Destinations(
@@ -36,6 +45,9 @@ object Routes {
     const val DONATIONS = "donations"
     const val ABOUTUS = "about us"
     const val ANIMALINFO = "animal info"
+    const val LOGIN = "login"
+    const val SIGNUP = "signup"
+    const val LANDINGPAGE = "landing page"
+    const val PROFILE = "profile"
     const val LOADING = "loading"
-    const val LANDING = "landing"
 }

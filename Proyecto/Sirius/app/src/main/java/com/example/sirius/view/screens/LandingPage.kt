@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,10 +60,10 @@ fun LandingPage(navController: NavController) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.sirius_no_name),
+                        painter = painterResource(id = R.drawable.aboutus_icon),
                         contentDescription = "Logo",
                         contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.size(39.dp) // Ajusta el tamaño de la imagen según tus preferencias
+                        modifier = Modifier.size(39.dp)
                     )
                     Text(
                         text = "Sirius",
@@ -79,9 +80,15 @@ fun LandingPage(navController: NavController) {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RoundButton("Login / Sign Up", navController)
+                RoundButton(
+                    text = stringResource(id = R.string.loginSignup),
+                    onClick = { navController.navigate(Routes.LOGIN) }
+                )
                 Spacer(modifier = Modifier.height(15.dp))
-                RoundButton("Join as a guest", navController)
+                RoundButton(
+                    text = stringResource(id = R.string.guest),
+                    onClick = { navController.navigate(Routes.HOME) }
+                )
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
@@ -89,22 +96,21 @@ fun LandingPage(navController: NavController) {
 }
 
 @Composable
-fun RoundButton(text: String, navController: NavController) {
+fun RoundButton(text: String, onClick: () -> Unit) {
     Button(
-        onClick = { navController.navigate(route = Routes.HOME) },
-        modifier = Modifier.width(219.dp)
+        onClick = onClick,
+        modifier = Modifier
+            .width(219.dp)
             .size(30.dp),
         shape = MaterialTheme.shapes.large,
         contentPadding = PaddingValues(0.dp),
-        colors = ButtonDefaults.buttonColors(Gold.copy(alpha = 0.61f))
+        colors = ButtonDefaults.buttonColors(Gold.copy(alpha = 0.65f))
     ) {
         Text(
             text = text,
             fontSize = 14.sp,
             fontWeight = FontWeight(400),
             color = Color(0xFF000000),
-
-
         )
     }
 }

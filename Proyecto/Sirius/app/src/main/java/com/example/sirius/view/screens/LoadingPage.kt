@@ -1,5 +1,6 @@
 package com.example.sirius.view.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,11 +18,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -31,7 +34,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun LoadingPage (navController: NavHostController, id: Int = -1){
-
+    val isSystemInDarkTheme = (LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     Surface(
         color = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize()
@@ -48,15 +51,15 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                 verticalArrangement = Arrangement.Top
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.sirius_no_name),
+                    painter = painterResource(id = R.drawable.aboutus_icon),
                     contentDescription = "Logo",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .width(98.dp)
-                        .height(99.dp)
+                        .height(99.dp),
+                    colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme) Color.White else Color.Black)
                 )
             }
-
             // Overlayed images
             Image(
                 painter = painterResource(id = R.drawable.loading_page_image1),
@@ -67,7 +70,6 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .height(50.dp)
                     .align(Alignment.BottomEnd)
                     .offset(x = (-52).dp, y = (-58).dp)
-
             )
             Image(
                 painter = painterResource(id = R.drawable.loading_page_image2),
@@ -80,9 +82,6 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .offset(x = 24.dp, y = (-68).dp),
 
                 )
-
-
-
             Image(
                 painter = painterResource(id = R.drawable.loading_page_image3),
                 contentDescription = "Logo",
@@ -92,9 +91,7 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .height(50.dp)
                     .align(Alignment.TopEnd)
                     .offset(x = -(53).dp, y = 293.dp),
-
-                )
-
+            )
             Image(
                 painter = painterResource(id = R.drawable.loading_page_image4),
                 contentDescription = "Logo",
@@ -105,7 +102,6 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .align(Alignment.TopStart)
                     .offset(x = 112.dp, y = 309.dp),
             )
-
             Image(
                 painter = painterResource(id = R.drawable.loading_page_image5),
                 contentDescription = "Logo",
@@ -116,7 +112,6 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .align(Alignment.TopStart)
                     .offset(x = 24.dp, y = 210.dp),
             )
-
             Image(
                 painter = painterResource(id = R.drawable.loading_page_image6),
                 contentDescription = "Logo",
@@ -127,7 +122,6 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .align(Alignment.TopEnd)
                     .offset(y = 85.dp, x = (-85).dp),
             )
-
             /*Image(
                 painter = painterResource(id = R.drawable.loading_page_image7),
                 contentDescription = "Logo",
@@ -137,7 +131,6 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                     .height(50.dp)
                     .align(Alignment.TopEnd)
             )*/
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -148,19 +141,17 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = "Sirius",
+                    text = stringResource(id = R.string.app_name),
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontWeight = FontWeight(700),
-                        color = Color(0xFF000000),
                     )
                 )
                 Text(
-                    text = "Proud to be an animal adopter",
+                    text = stringResource(id = R.string.slogan),
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontWeight = FontWeight(400),
-                        color = Color(0xFF000000),
                     )
                 )
             }
@@ -173,146 +164,7 @@ fun LoadingPage (navController: NavHostController, id: Int = -1){
         if (id == 1){
             navController.navigate(route = Routes.HOME)
         } else {
-            navController.navigate(route = Routes.LANDING)
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun LoadingPagePreview() {
-    Surface(
-        color = MaterialTheme.colorScheme.background,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 161.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sirius_no_name),
-                    contentDescription = "Logo",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .width(98.dp)
-                        .height(99.dp)
-                )
-            }
-
-            // Overlayed images
-            Image(
-                painter = painterResource(id = R.drawable.loading_page_image1),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (-52).dp, y = (-58).dp)
-
-            )
-            Image(
-                painter = painterResource(id = R.drawable.loading_page_image2),
-                contentDescription = "Descripción de la imagen",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.BottomStart)
-                    .offset(x = 24.dp, y = (-68).dp),
-
-                )
-
-
-
-            Image(
-                painter = painterResource(id = R.drawable.loading_page_image3),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(x = -(53).dp, y = 293.dp),
-
-                )
-
-            Image(
-                painter = painterResource(id = R.drawable.loading_page_image4),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.TopStart)
-                    .offset(x = 112.dp, y = 309.dp),
-            )
-
-            Image(
-                painter = painterResource(id = R.drawable.loading_page_image5),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.TopStart)
-                    .offset(x = 24.dp, y = 210.dp),
-            )
-
-            Image(
-                painter = painterResource(id = R.drawable.loading_page_image6),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(y = 85.dp, x = (-85).dp),
-            )
-
-            /*Image(
-                painter = painterResource(id = R.drawable.loading_page_image7),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.TopEnd)
-            )*/
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .width(47.dp)
-                    .height(23.dp)
-                    .padding(bottom = 118.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Text(
-                    text = "Sirius",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight(700),
-                        color = Color(0xFF000000),
-                    )
-                )
-                Text(
-                    text = "Proud to be an animal adopter",
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFF000000),
-                    )
-                )
-            }
+            navController.navigate(route = Routes.LANDINGPAGE)
         }
     }
 }

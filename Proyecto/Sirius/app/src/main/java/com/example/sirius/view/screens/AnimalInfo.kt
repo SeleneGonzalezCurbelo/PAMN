@@ -1,6 +1,7 @@
 package com.example.sirius.view.screens
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,7 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.sirius.R
 import com.example.sirius.ui.theme.Orange
-import com.example.sirius.viewmodel.navigation.AnimalViewModel
+import com.example.sirius.viewmodel.AnimalViewModel
 import java.time.Year
 
 @SuppressLint("DiscouragedApi")
@@ -60,6 +62,8 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
     ) {
         var isFavorite by remember { mutableStateOf(false) }
         val animal by viewModel.getAnimalById(id ?: 0).collectAsState(initial = null)
+        val isSystemInDarkTheme =
+            (LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
         Box(
             modifier = Modifier
@@ -157,7 +161,8 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.32f)
+                    .fillMaxHeight(0.32f),
+                colorFilter = ColorFilter.tint(color = if (!isSystemInDarkTheme) Color.White else Color.Black)
             )
         }
 
@@ -171,10 +176,9 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                     text = animal!!.nameAnimal,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,
-                    color = Color.Black,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp)
+                        .padding(start = 20.dp)
                 )
                 Text(
                     text = animal!!.longInfoAnimal,
@@ -182,7 +186,7 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp)
+                        .padding(start = 20.dp)
                 )
                 val birthYear = animal!!.birthDate.substring(0, 4).toInt()
                 val currentYear = Year.now().value
@@ -190,21 +194,21 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                 if (age == 0) {
                     age = animal!!.birthDate.substring(6, 7).toInt()
                     Text(
-                        text = "Edad: $age meses",
+                        text = "Age: $age months",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp)
+                            .padding(start = 20.dp)
                     )
                 } else {
                     Text(
-                        text = "Edad: $age años",
+                        text = "Age: $age years",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp)
+                            .padding(start = 20.dp)
                     )
                 }
 
@@ -221,161 +225,4 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
             }
         }
     }
-
-        /*
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Box (
-                modifier = Modifier
-                    .width(0.75f.dp)
-                    .aspectRatio(1f)
-            ) {
-                if (animal != null) {
-                    val context = LocalContext.current
-
-                    // Obtener el nombre del recurso sin la ruta
-                    val resourceName = animal!!.photoAnimal.substringAfterLast("/")
-
-                    // Obtener el ID del recurso sin la ruta
-                    val resourceId = context.resources.getIdentifier(
-                        resourceName.replace(".jpg", ""), "drawable", context.packageName
-                    )
-
-                    if (resourceId != 0) {
-                        // Si se encontró el recurso, cargar la imagen
-                        val painter = painterResource(id = resourceId)
-                        Image(
-                            painter = painter,
-                            contentDescription = animal!!.longInfoAnimal,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Log.e(
-                            "AnimalImage",
-                            "Recurso no encontrado para ${animal!!.photoAnimal}"
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    // Botón sobre la imagen
-                    Button(
-                        onClick = { },
-                        modifier = Modifier
-                            .width(200.dp),
-                        colors = ButtonDefaults.buttonColors(Orange)
-                    ) {
-                        Text(
-                            text = "Adopt me!",
-                            style = TextStyle(
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight(400),
-                                color = Color(0xFFFFFFFF),
-                            ),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    // Icono de favorito
-                    if (isFavorite) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = null,
-                            tint = Color.Black,
-                            modifier = Modifier
-                                .clickable { isFavorite = !isFavorite }
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = null,
-                            tint = Color.Black,
-                            modifier = Modifier
-                                .clickable { isFavorite = !isFavorite }
-                        )
-                    }
-                }
-            }*/
-
-        /*Column (
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.rectangle),
-                            contentDescription = "rectangle",
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .width(407.11111.dp)
-                                .height(193.88754.dp)
-                        )
-                    }*/
-
-
-        /*Spacer(modifier = Modifier.height(10.dp))
-
-                    if (animal != null) {
-                        Text(
-                            text = animal!!.nameAnimal,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Start,
-                            color = Color.Black,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 29.dp)
-                        )
-                        Text(
-                            text = animal!!.longInfoAnimal,
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 29.dp)
-                        )
-                        val birthYear = animal!!.birthDate.substring(0, 4).toInt()
-                        val currentYear = Year.now().value
-                        var age = currentYear - birthYear
-                        if (age == 0) {
-                            age = animal!!.birthDate.substring(6, 7).toInt()
-                            Text(
-                                text = "Edad: $age meses",
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 29.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Edad: $age años",
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 29.dp)
-                            )
-                        }
-
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                            },
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .offset(x = (-16).dp)
-                        ) {
-                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-                        }
-                    }*/
-
-
-        //  }
 }
