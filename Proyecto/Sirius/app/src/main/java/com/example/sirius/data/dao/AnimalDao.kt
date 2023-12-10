@@ -60,4 +60,8 @@ interface AnimalDao {
 
     @Query("SELECT DISTINCT type_animal FROM Animal")
     fun getTypeAnimal(): Flow<List<String>>
+
+    @Query("SELECT * FROM Animal WHERE id IN (:animalIds)")
+    fun getAnimalsByIds(animalIds: List<Int>): Flow<List<Animal>>
+
 }

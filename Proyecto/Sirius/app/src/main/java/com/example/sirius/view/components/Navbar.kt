@@ -120,7 +120,7 @@ fun NavigationContent(
                         navController = navController,
                         ageList = ageList,
                         breedList = breedList,
-                        typeList = typeList
+                        typeList = typeList,
                     )
                 }
 
@@ -136,7 +136,7 @@ fun NavigationContent(
                     })) {
                     val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
 
-                    AnimalInfo(navController, it.arguments?.getInt("id"), viewModel)
+                    AnimalInfo(navController, it.arguments?.getInt("id"), viewModel, userViewModel)
                 }
                 composable(route = Routes.LOGIN) {
                     LoginScreen(navController = navController, userViewModel = userViewModel)
@@ -160,7 +160,9 @@ fun NavigationContent(
                     LoadingPage(navController, id)
                 }
                 composable(route = Routes.PROFILE) {
-                    ProfileScreen(navController = navController, userViewModel = userViewModel)
+                    val animalVm: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
+
+                    ProfileScreen(navController = navController, userViewModel = userViewModel, animalVm)
                 }
             }
             if (currentRoute !in listOf(

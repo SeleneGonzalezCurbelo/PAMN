@@ -10,15 +10,20 @@ import com.example.sirius.AnimalApplication
 import com.example.sirius.data.dao.UserDao
 import com.example.sirius.model.User
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class UserViewModel(private val userDao: UserDao) : ViewModel() {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser //datastore?
+    private val _favoriteStatus = MutableStateFlow(false)
+    val favoriteStatus: StateFlow<Boolean> = _favoriteStatus.asStateFlow()
 
     suspend fun login(username: String, password: String): Boolean {
         return suspendCoroutine { continuation ->
@@ -68,13 +73,17 @@ class UserViewModel(private val userDao: UserDao) : ViewModel() {
                     password = password,
                     role = "user"
                 )
+
                 viewModelScope.launch {
-                    insertUser(newUser)
-                    _currentUser.value = newUser
-                    saveAuthenticationState(newUser)
+                    withContext(Dispatchers.IO) {
+                        userDao.insertUser(newUser)
+                        _currentUser.value = newUser
+                        saveAuthenticationState(newUser)
+                    }
                 }
                 true
             } catch (e: Exception) {
+                println("error al insertar")
                 e.printStackTrace()
                 false
             }
@@ -115,7 +124,45 @@ class UserViewModel(private val userDao: UserDao) : ViewModel() {
     }
 
     suspend fun insertUser(user: User) {
-        userDao.insertUser(user)
+        viewModelScope.launch { userDao.insertUser(user) }
+
+    }
+
+    suspend fun updateFavorites(user: User, newFavorites: String) {
+        println("newFavorites")
+        println(newFavorites)
+        viewModelScope.launch {
+            // Elimina cualquier ocurrencia de "null" y maneja las comas al principio y al final
+            user.favorites = user.favorites
+                ?.replace("null,", "")
+                ?.replace("^,|,$".toRegex(), "") // Elimina comas al principio o al final
+                ?: ""
+
+            user.favorites = newFavorites
+
+            // Actualiza el usuario en la base de datos
+            userDao.update(user)
+            println("Favorites updated: $newFavorites")
+            println(user)
+        }
+    }
+
+    suspend fun updateUserName(user: User, newUserName: String){
+        user.username = newUserName
+        println(newUserName)
+        println(user)
+        userDao.update(user)
+    }
+
+    suspend fun updatePassword(user: User, newPassword: String){
+        user.password = newPassword
+        println(newPassword)
+        println(user)
+        userDao.update(user)
+    }
+
+    suspend fun getFavoritesByUsername(username: String): String? {
+        return userDao.getFavoritesByUsername(username)
     }
 
     companion object {

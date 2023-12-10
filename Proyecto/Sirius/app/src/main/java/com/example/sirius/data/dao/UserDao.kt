@@ -2,13 +2,21 @@ package com.example.sirius.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.sirius.model.User
 
 @Dao
 interface UserDao {
-    @Insert(entity = User::class)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUser(user: User)
+
+    @Query("SELECT * FROM user")
+    suspend fun getAllUsers(): List<User>
+
+    @Update
+    suspend fun update(user: User)
 
     @Query("SELECT * FROM User WHERE id = :userId")
     suspend fun getUserById(userId: Int): User?
@@ -24,4 +32,7 @@ interface UserDao {
 
     @Query("DELETE FROM User")
     suspend fun deleteAllUsers()
+
+    @Query("SELECT favorites FROM User WHERE username = :username")
+    suspend fun getFavoritesByUsername(username: String): String?
 }

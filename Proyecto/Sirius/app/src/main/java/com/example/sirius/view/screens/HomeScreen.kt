@@ -26,8 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sirius.R
-import com.example.sirius.model.News
 import com.example.sirius.model.Animal
+import com.example.sirius.model.News
 import com.example.sirius.navigation.Routes
 import com.example.sirius.viewmodel.UserViewModel
 

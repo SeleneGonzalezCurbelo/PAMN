@@ -3,28 +3,28 @@ package com.example.sirius.model
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "User")
+@Entity(tableName = "user", indices = [Index(value = ["username"], unique = true)])
 data class User(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Int = 0,
     @NonNull
     @ColumnInfo(name = "username")
-    val username: String,
+    var username: String,
     @NonNull
     @ColumnInfo(name = "email")
     val email: String,
     @NonNull
     @ColumnInfo(name = "password")
-    val password: String,
+    var password: String,
     @NonNull
     @ColumnInfo(name = "role")
     //Enumerado
     val role: String,
+    @ColumnInfo(name = "favorites")
+    var favorites: String? = null
     // Image, Favourites
-) {
-    constructor(username: String, email: String, password: String, role: String)
-            : this(0, username, email, password, role) //null id
-}
+)

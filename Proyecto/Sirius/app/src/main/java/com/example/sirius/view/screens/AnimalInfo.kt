@@ -46,21 +46,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.sirius.R
 import com.example.sirius.ui.theme.Orange
 import com.example.sirius.viewmodel.AnimalViewModel
+import com.example.sirius.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
 import java.time.Year
 
 @SuppressLint("DiscouragedApi")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewModel) {
+fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewModel, userViewModel: UserViewModel) {
+    var user by remember { mutableStateOf(userViewModel.getAuthenticatedUser()) }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        var isFavorite by remember { mutableStateOf(false) }
+        //var isFavorite by remember { mutableStateOf(false) }
+
         val animal by viewModel.getAnimalById(id ?: 0).collectAsState(initial = null)
         val isSystemInDarkTheme =
             (LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
@@ -74,6 +80,8 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                     .fillMaxHeight(0.75f)
             ){
                 val animal by viewModel.getAnimalById(id ?: 0).collectAsState(initial = null)
+
+
                 if (animal != null) {
                     val context = LocalContext.current
 
@@ -129,15 +137,48 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                                 textAlign = TextAlign.Center
                             )
                         }
+                        val userId = user?.id
+                        var currentFavorites: String? by remember { mutableStateOf(null) }
+                        val favorites = user?.favorites
+                        //var isFavorite = .contains(animal?.id.toString()) == true
+                        var isFavorite by remember {
+                            mutableStateOf(false)
+                        }
+
+                        if (favorites?.contains(animal?.id.toString()) == true) {
+                            isFavorite = true
+                        }
+
+                        var newFavorites = "$currentFavorites, ${animal?.id}"
 
                         // Icono de favorito
+                        println("isFavorite")
+                        println(isFavorite)
                         if (isFavorite) {
                             Icon(
                                 imageVector = Icons.Default.Favorite,
                                 contentDescription = null,
                                 tint = Color.Black,
                                 modifier = Modifier
-                                    .clickable { isFavorite = !isFavorite }
+                                    .clickable {
+                                        // Remove the animal from favorites
+                                        userViewModel.viewModelScope.launch {
+                                            animal?.id?.let { animalId ->
+                                                user?.let { currentUser ->
+                                                    val currentFavoritesList = currentUser.favorites?.split(",")?.map { it.trim() } ?: emptyList()
+                                                    val newFavoritesList = if (isFavorite) {
+                                                        currentFavoritesList.filter { it != animal?.id.toString() }
+                                                    } else {
+                                                        currentFavoritesList + animalId
+                                                    }
+
+                                                    currentUser.favorites = newFavoritesList.joinToString(",") // Update the property
+                                                    userViewModel.updateFavorites(currentUser, newFavoritesList.joinToString(","))
+                                                    isFavorite = !isFavorite // Toggle the UI state
+                                                }
+                                            }
+                                        }
+                                    }
                             )
                         } else {
                             Icon(
@@ -145,7 +186,24 @@ fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewMode
                                 contentDescription = null,
                                 tint = Color.Black,
                                 modifier = Modifier
-                                    .clickable { isFavorite = !isFavorite }
+                                    .clickable {
+                                        // Add the animal to favorites
+                                        userViewModel.viewModelScope.launch {
+                                            animal?.id?.let {
+                                                userId?.let { userId ->
+                                                    user?.let { currentUser ->
+                                                        println("Current Favorites: ${currentUser.favorites}")
+                                                        val newFavorites = "${currentUser.favorites}, $it"
+                                                        println("New Favorites: $newFavorites")
+                                                        currentUser.favorites = newFavorites // Update the property
+                                                        userViewModel.updateFavorites(currentUser, newFavorites)
+                                                        isFavorite = newFavorites.contains(it.toString())
+                                                        println("isFavorite after update: $isFavorite")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                             )
                         }
                     }
