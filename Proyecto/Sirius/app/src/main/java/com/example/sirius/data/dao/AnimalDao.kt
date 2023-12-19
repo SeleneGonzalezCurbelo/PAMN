@@ -1,12 +1,20 @@
 package com.example.sirius.data.dao
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.sirius.model.Animal
+import com.example.sirius.model.LikedAnimal
+import com.example.sirius.model.TypeAnimal
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Dao
 interface AnimalDao {
@@ -40,6 +48,9 @@ interface AnimalDao {
     @Query("SELECT * FROM Animal WHERE breed = :breed ORDER BY entry_date DESC")
     fun getAnimalByBreed(breed: String): Flow<List<Animal>>
 
+    @Query("SELECT * FROM Animal WHERE id IN (:animalIds)")
+    fun getAnimalsByIds(animalIds: List<Int>): Flow<List<Animal>>
+
     @Query("SELECT * FROM Animal WHERE birth_date = :birthDate ORDER BY birth_date ASC")
     fun getAnimalsByAgeASC(birthDate: Int): Flow<List<Animal>>
 
@@ -61,7 +72,15 @@ interface AnimalDao {
     @Query("SELECT DISTINCT type_animal FROM Animal")
     fun getTypeAnimal(): Flow<List<String>>
 
-    @Query("SELECT * FROM Animal WHERE id IN (:animalIds)")
-    fun getAnimalsByIds(animalIds: List<Int>): Flow<List<Animal>>
+    @Query("SELECT animal.* FROM Animal INNER JOIN LikedAnimal ON animal.id = LikedAnimal.animal_id WHERE LikedAnimal.user_id = :userId")
+    fun getLikedAnimals(userId: Int): Flow<List<Animal>>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLikedAnimal(likedAnimal: LikedAnimal)
+
+    @Query("DELETE FROM LikedAnimal WHERE user_id = :userId AND animal_id = :animalId")
+    suspend fun removeLikedAnimal(userId: Int, animalId: Int)
+
+    @Query("SELECT * FROM Animal WHERE SUBSTR(birth_date, 1, 4) BETWEEN :startYear AND :endYear")
+    fun getAnimalsByBirthYearRange(startYear: String, endYear: String): Flow<List<Animal>>
 }

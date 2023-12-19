@@ -1,36 +1,41 @@
-
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.sirius.R
 import com.example.sirius.ui.theme.Green1
+import com.example.sirius.ui.theme.Green4
 import com.example.sirius.ui.theme.SiriusTheme
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun SectionTitle(title: String) {
@@ -42,16 +47,23 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun RoundedImage(@DrawableRes imageRes: Int, modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = imageRes),
-        contentDescription = null,
-        modifier = modifier
-            .fillMaxHeight()
+fun SquareImage(imageRes: Int, modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier
             .width(100.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary)
-    )
+            .height(100.dp)
+            .padding(2.dp)
+            .clip(MaterialTheme.shapes.extraSmall)
+    ) {
+        Image(
+            painter = painterResource(id = imageRes),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                .fillMaxSize()
+                .clip(MaterialTheme.shapes.extraSmall)
+        )
+    }
 }
 
 @Composable
@@ -77,34 +89,50 @@ fun LocationCard(location: String) {
                 text = "Location",
                 style = MaterialTheme.typography.headlineMedium,
             )
-            Text(
-                text = location,
-                style = MaterialTheme.typography.labelLarge,
-            )
+//            Text(
+//                text = location,
+//                style = MaterialTheme.typography.labelLarge,
+//            )
 
             // Mapa de Google
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp) // Altura fija para el mapa (ajusta según sea necesario)
-                    .clip(MaterialTheme.shapes.medium) // Bordes redondeados
+                    .height(120.dp)
+                    .clip(MaterialTheme.shapes.medium)
                     .background(Green1)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.location_image),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(MaterialTheme.shapes.medium) // Bordes redondeados
-                )
+                AddGoogleMap()
             }
         }
     }
 }
 
+@Composable
+fun AddGoogleMap() {
+    val sirius = LatLng(28.302164, -16.396366)
+    val marker = MarkerState(position = sirius)
+    val cameraPositionState = rememberCameraPositionState{
+        position = CameraPosition.fromLatLngZoom(sirius,15f)
+    }
+    GoogleMap (
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState
+    ) {
+        Marker(
+            state = marker,
+            title = "Sirius Canarias Animal Shelter"
+        )
+    }
+}
 
+
+@SuppressLint("DiscouragedApi")
 @Composable
 fun AboutUsScreen() {
+    val shelterImages = listOf<String>("shelter1", "shelter2", "shelter3", "shelter4")
+    val context = LocalContext.current
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -122,18 +150,17 @@ fun AboutUsScreen() {
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item {
-                    RoundedImage(imageRes = R.drawable.dog1)
-                }
-                item {
-                    RoundedImage(imageRes = R.drawable.dog1)
-                }
-                item {
-                    RoundedImage(imageRes = R.drawable.dog1)
-                }
-                item {
-                    // Add another image (replace R.drawable.dog1 with the appropriate resource)
-                    RoundedImage(imageRes = R.drawable.dog1)
+                for (image in shelterImages) {
+                    val resourceId = context.resources.getIdentifier(
+                        image, "drawable", context.packageName
+                    )
+                    item {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            SquareImage(resourceId)
+                        }
+                    }
                 }
             }
         }
@@ -154,7 +181,7 @@ fun AboutUsScreen() {
 
         item {
             SectionTitle("Contact Information")
-            JustifiedText("Email: info@shelter.org\nPhone: +1 123 456 7890")
+            JustifiedText("Email: sirius@shelter.org\nPhone: +1 123 456 7890")
         }
     }
 }
@@ -176,8 +203,8 @@ fun JustifiedText(text: String) {
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 16.dp), // Agrega un relleno a la derecha para el espacio deseado
-        textAlign = TextAlign.Justify // Justifica el texto
+            .padding(end = 16.dp),
+        textAlign = TextAlign.Justify
     )
     Spacer(modifier = Modifier.padding(10.dp))
 }

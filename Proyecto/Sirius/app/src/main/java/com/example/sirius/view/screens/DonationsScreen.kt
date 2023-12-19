@@ -1,8 +1,10 @@
-
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -11,15 +13,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.sirius.R
 import com.example.sirius.navigation.Routes
+import com.example.sirius.ui.theme.SiriusTheme
+import com.example.sirius.view.components.NotAvailableDialog
 import com.example.sirius.viewmodel.ContactsViewModel
 
 @SuppressLint("RememberReturnType")
@@ -52,9 +58,6 @@ fun DonationsScreen(navController: NavController) {
         }
         item {
             DonationButton(
-                onClick = {
-                    navController.navigate(route = Routes.LOADING + "/" + 1)
-                },
                 imageResIdLeft = R.drawable.paypal_logo,
                 buttonText = "Donate with PayPal"
             )
@@ -62,18 +65,12 @@ fun DonationsScreen(navController: NavController) {
 
         item {
             DonationButton(
-                onClick = {
-                    navController.navigate(route = Routes.LOADING + "/" + 1)
-                },
                 imageResIdLeft = R.drawable.mastercard_logo,
                 buttonText = "Donate with Debit or Credit Card"
             )
         }
         item {
             DonationButton(
-                onClick = {
-                    navController.navigate(route = Routes.LOADING + "/" + 1)
-                },
                 imageResIdLeft = R.drawable.bizum_logo,
                 buttonText = "Donate with Bizum"
             )
@@ -93,12 +90,13 @@ fun DonationsScreen(navController: NavController) {
 
 @Composable
 fun DonationButton(
-    onClick: () -> Unit,
     imageResIdLeft: Int,
     buttonText: String
 ) {
+    var showDialog by remember { mutableStateOf(false)  }
+
     Button(
-        onClick = onClick,
+        onClick = { showDialog = true },
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 60.dp)
@@ -121,6 +119,13 @@ fun DonationButton(
                 fontSize = 16.sp
             )
         }
+    }
+    if (showDialog) {
+        NotAvailableDialog(
+            onDismiss = {
+                showDialog = false
+            }
+        )
     }
 }
 

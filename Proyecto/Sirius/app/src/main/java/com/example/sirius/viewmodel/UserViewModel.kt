@@ -1,6 +1,5 @@
 package com.example.sirius.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,21 +8,19 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sirius.AnimalApplication
 import com.example.sirius.data.dao.UserDao
 import com.example.sirius.model.User
-import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import android.content.Context
+import android.util.Log
+import com.google.gson.Gson
+import java.lang.Exception
 
 class UserViewModel(private val userDao: UserDao) : ViewModel() {
     private val _currentUser = MutableStateFlow<User?>(null)
-    val currentUser: StateFlow<User?> = _currentUser //datastore?
-    private val _favoriteStatus = MutableStateFlow(false)
-    val favoriteStatus: StateFlow<Boolean> = _favoriteStatus.asStateFlow()
+    val currentUser: StateFlow<User?> = _currentUser
 
     suspend fun login(username: String, password: String): Boolean {
         return suspendCoroutine { continuation ->
@@ -71,19 +68,16 @@ class UserViewModel(private val userDao: UserDao) : ViewModel() {
                     username = username,
                     email = email,
                     password = password,
-                    role = "user"
+                    role = "user",
+                    photoUser = "res/drawable/user_default_image.jpg",
                 )
-
                 viewModelScope.launch {
-                    withContext(Dispatchers.IO) {
-                        userDao.insertUser(newUser)
-                        _currentUser.value = newUser
-                        saveAuthenticationState(newUser)
-                    }
+                    insertUser(newUser)
+                    _currentUser.value = newUser
+                    saveAuthenticationState(newUser)
                 }
                 true
             } catch (e: Exception) {
-                println("error al insertar")
                 e.printStackTrace()
                 false
             }
@@ -101,7 +95,48 @@ class UserViewModel(private val userDao: UserDao) : ViewModel() {
         return false
     }
 
-    suspend fun updateUser() {}
+    suspend fun updateProfilePhoto(user: User, newPhoto: String) {
+        user.photoUser = newPhoto
+        userDao.updateProfilePhoto(user.id, newPhoto)
+        _currentUser.value = user
+    }
+
+    suspend fun updateUserName(user: User, newUserName: String) {
+        user.username = newUserName
+        userDao.update(user)
+    }
+
+    suspend fun updateEmail(user: User, newEmail: String): Boolean {
+        return if (isEmailAvailable(newEmail)) {
+            user.email = newEmail
+            userDao.update(user)
+            true
+        } else {
+            false
+        }
+    }
+
+    private suspend fun isEmailAvailable(email: String): Boolean {
+        val existingUser = getUserByEmail(email)
+        return existingUser == null
+    }
+
+    suspend fun updatePassword(user: User, currentPassword: String, newPassword: String): Boolean {
+        return try {
+            val existingUser = userDao.getUserByCredentials(user.username, newPassword)
+
+            if (user.password == currentPassword && newPassword != currentPassword && existingUser == null) {
+                user.password = newPassword
+                userDao.update(user)
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 
     suspend fun getUserById(userId: Int): User? {
         return userDao.getUserById(userId)
@@ -124,46 +159,10 @@ class UserViewModel(private val userDao: UserDao) : ViewModel() {
     }
 
     suspend fun insertUser(user: User) {
-        viewModelScope.launch { userDao.insertUser(user) }
-
+        userDao.insertUser(user)
     }
 
-    suspend fun updateFavorites(user: User, newFavorites: String) {
-        println("newFavorites")
-        println(newFavorites)
-        viewModelScope.launch {
-            // Elimina cualquier ocurrencia de "null" y maneja las comas al principio y al final
-            user.favorites = user.favorites
-                ?.replace("null,", "")
-                ?.replace("^,|,$".toRegex(), "") // Elimina comas al principio o al final
-                ?: ""
-
-            user.favorites = newFavorites
-
-            // Actualiza el usuario en la base de datos
-            userDao.update(user)
-            println("Favorites updated: $newFavorites")
-            println(user)
-        }
-    }
-
-    suspend fun updateUserName(user: User, newUserName: String){
-        user.username = newUserName
-        println(newUserName)
-        println(user)
-        userDao.update(user)
-    }
-
-    suspend fun updatePassword(user: User, newPassword: String){
-        user.password = newPassword
-        println(newPassword)
-        println(user)
-        userDao.update(user)
-    }
-
-    suspend fun getFavoritesByUsername(username: String): String? {
-        return userDao.getFavoritesByUsername(username)
-    }
+    fun getLikedAnimals(userId: Int) = userDao.getLikedAnimals(userId)
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {

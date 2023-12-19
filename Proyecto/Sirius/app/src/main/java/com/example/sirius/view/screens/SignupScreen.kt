@@ -1,19 +1,23 @@
 package com.example.sirius.view.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -30,24 +34,21 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewModelScope
@@ -58,6 +59,9 @@ import com.example.sirius.ui.theme.Green1
 import com.example.sirius.view.components.CustomSnackbar
 import com.example.sirius.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
+import com.example.sirius.tools.isEmailValid
+import com.example.sirius.tools.isPasswordValid
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +71,6 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
     var email by remember { mutableStateOf("") }
     var signUpButtonClicked by remember { mutableStateOf(false) }
     var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
-    val isSystemInDarkTheme = (LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     var passwordVisibility by remember { mutableStateOf(false) }
 
     Box(
@@ -84,7 +87,7 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
 //            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SignUpHeader(isSystemInDarkTheme)
+            SignUpHeader(isSystemInDarkTheme())
             // Username
             OutlinedTextField(
                 value = username,
@@ -92,7 +95,7 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                 label = {
                     Text(
                         stringResource(id = R.string.username),
-                        style = TextStyle(color = if (isSystemInDarkTheme) Color.White else Color.Black)
+                        style = TextStyle(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
                 },
                 singleLine = true,
@@ -123,7 +126,7 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                 label = {
                     Text(
                         stringResource(id = R.string.email),
-                        style = TextStyle(color = if (isSystemInDarkTheme) Color.White else Color.Black)
+                        style = TextStyle(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
                 },
                 singleLine = true,
@@ -142,8 +145,12 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                     )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (signUpButtonClicked && email.isBlank()) Color.Red else Green1,
-                    unfocusedBorderColor = if (signUpButtonClicked && email.isBlank()) Color.Red else Green1,
+                    focusedBorderColor = if (email.isNotBlank() && !isEmailValid(email)
+                                             || signUpButtonClicked && email.isBlank()) Color.Red
+                                         else Green1,
+                    unfocusedBorderColor = if (email.isNotBlank() && !isEmailValid(email)
+                                               || signUpButtonClicked && email.isBlank()) Color.Red
+                                           else Green1,
                 )
             )
             Spacer(modifier = Modifier.height(3.dp))
@@ -154,11 +161,13 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                 label = {
                     Text(
                         stringResource(id = R.string.password),
-                        style = TextStyle(color = if (isSystemInDarkTheme) Color.White else Color.Black)
+                        style = TextStyle(color = if (isSystemInDarkTheme()) Color.White
+                                                  else Color.Black)
                     )
                 },
                 singleLine = true,
-                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisibility) VisualTransformation.None
+                                       else PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(3.dp)
@@ -174,16 +183,24 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                        Icon(
-                            painter = if (passwordVisibility) painterResource(id = R.drawable.visibility) else painterResource(id = R.drawable.visibility_off),
-                            contentDescription = if (passwordVisibility) "Hide password" else "Show password"
-                        )
+                    if (password.isNotBlank()) {
+                        IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                            Icon(
+                                painter = if (passwordVisibility) painterResource(id = R.drawable.visibility)
+                                          else painterResource(id = R.drawable.visibility_off),
+                                contentDescription = if (passwordVisibility) "Hide password" else "Show password",
+                                modifier = Modifier.aspectRatio(0.5f)
+                            )
+                        }
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (signUpButtonClicked && password.isBlank()) Color.Red else Green1,
-                    unfocusedBorderColor = if (signUpButtonClicked && password.isBlank()) Color.Red else Green1,
+                    focusedBorderColor = if (password.isNotBlank() && !isPasswordValid(password)
+                                             || signUpButtonClicked && password.isBlank()) Color.Red
+                                         else Green1,
+                    unfocusedBorderColor = if (password.isNotBlank() && !isPasswordValid(password)
+                                               || signUpButtonClicked && password.isBlank()) Color.Red
+                                           else Green1,
                 )
             )
             Spacer(modifier = Modifier.height(3.dp))
@@ -197,7 +214,7 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
             ) {
                 Text(
                     stringResource(id = R.string.account_login),
-                    style = TextStyle(color = if (isSystemInDarkTheme) Color.White else Color.Black),
+                    style = TextStyle(color = if (isSystemInDarkTheme()) Color.White else Color.Black),
                     textAlign = TextAlign.Center
                 )
             }
@@ -207,11 +224,18 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                 onClick = {
                     userViewModel.viewModelScope.launch {
                         signUpButtonClicked = true
-                        val success = userViewModel.registerUser(username, email, password)
-                        if (success) {
-                            navController.navigate(Routes.HOME)
+                        if (isEmailValid(email) && isPasswordValid(password)) {
+                            val success = userViewModel.registerUser(username, email, password)
+                            if (success) {
+                                delay(2000)
+                                navController.navigate(Routes.HOME)
+                            } else {
+                                errorMessage = "Oops! Something went wrong during user creation"
+                            }
+                        } else if (!isPasswordValid(password)) {
+                            errorMessage = "Invalid password format.\nPassword must have at least 6 characters, 1 uppercase letter, and 1 special symbol\n"
                         } else {
-                            errorMessage = "Oops! Something went wrong during user creation"
+                            errorMessage = "Invalid email format.\nExpected format: name@example.com\n"
                         }
                     }
                 },
@@ -234,7 +258,6 @@ fun SignupScreen(navController: NavController, userViewModel: UserViewModel) {
                 CustomSnackbar(
                     message = message,
                     onDismiss = { errorMessage = null },
-                    isSystemInDarkTheme = isSystemInDarkTheme
                 )
             }
         }

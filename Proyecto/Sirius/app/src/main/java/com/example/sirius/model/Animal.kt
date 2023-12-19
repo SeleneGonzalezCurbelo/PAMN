@@ -1,9 +1,13 @@
 package com.example.sirius.model
 
+import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Entity(tableName = "Animal")
 data class Animal (
@@ -44,4 +48,4 @@ data class Animal (
     @NonNull
     @ColumnInfo(name = "photo_animal")
     val photoAnimal: String
-) 
+)

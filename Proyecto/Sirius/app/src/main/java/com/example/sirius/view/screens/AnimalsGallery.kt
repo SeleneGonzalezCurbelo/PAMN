@@ -19,9 +19,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -59,14 +59,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.sirius.model.Animal
 import com.example.sirius.navigation.Routes
+import com.example.sirius.tools.buildAnAgeText
+import com.example.sirius.tools.calculateAge
+import com.example.sirius.tools.calculateAgeCategory
+import com.example.sirius.tools.getYearRangeFromCategory
+import com.example.sirius.tools.mapCategoryToYearRange
 import com.example.sirius.ui.theme.Gold
 import com.example.sirius.ui.theme.Green1
 import com.example.sirius.ui.theme.Orange
+import com.example.sirius.ui.theme.Wine
 import com.example.sirius.viewmodel.AnimalViewModel
+import com.example.sirius.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
+import java.time.Year
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -74,12 +83,11 @@ fun AnimalsGallery(
     navController: NavController,
     ageList: List<String>,
     breedList: List<String>,
-    typeList: List<String>
+    typeList: List<String>,
+    userViewModel: UserViewModel,
+    viewModel: AnimalViewModel
 ) {
-
-    val viewModel: AnimalViewModel = viewModel(factory = AnimalViewModel.factory)
-
-    var selectedAge by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
     var selectedBreed by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("") }
 
@@ -93,31 +101,31 @@ fun AnimalsGallery(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
-        ) {
+        ) { // es algo aqui TODO
             DropdownButton(
-                text = "Arrival year",
+                text = "Age range",
                 options = ageList.map { it.toString() },
-                selectedOption = selectedAge,
-                onOptionSelected = { selectedAge = it },
+                selectedOption = selectedCategory,
+                onOptionSelected = { selectedCategory = it },
                 expanded = ageDropdownExpanded,
                 onExpandedChange = { expanded ->
                     ageDropdownExpanded = expanded
                 },
                 viewModel = viewModel,
-                originalText = "Arrival year",
+                originalText = "Age range",
                 color = Color.White,
+                aux = true,
             )
-
             ClearFilterIconButton(
-                onClick = { selectedAge = "" },
-                onOptionSelected = { selectedAge = it },
-                selectedOption = selectedAge
+                onClick = { selectedCategory = "" },
+                onOptionSelected = { selectedCategory = it },
+                selectedOption = selectedCategory
             )
-
             DropdownButton(
                 text = "Breed",
                 options = breedList.map { it },
@@ -131,13 +139,11 @@ fun AnimalsGallery(
                 originalText = "Breed",
                 color = Color.White,
             )
-
             ClearFilterIconButton(
                 onClick = { selectedBreed = "" },
                 onOptionSelected = { selectedBreed = it },
                 selectedOption = selectedBreed
             )
-
             DropdownButton(
                 text = "Type",
                 options = typeList.map { it },
@@ -151,7 +157,6 @@ fun AnimalsGallery(
                 originalText = "Type",
                 color = Color.White,
             )
-
             ClearFilterIconButton(
                 onClick = { selectedType = "" },
                 onOptionSelected = { selectedType = it },
@@ -159,13 +164,19 @@ fun AnimalsGallery(
             )
         }
 
-        val animalsByAge = if (selectedAge.isNotBlank()) {
-            val age = selectedAge
-            if (age != null) {
-                viewModel.getAnimalsByAgeDesc(age).collectAsState(emptyList()).value
-            } else {
-                emptyList()
-            }
+        val animalsByAgeCategory = if (selectedCategory.isNotBlank()) {
+            val ageRange = mapCategoryToYearRange(selectedCategory)
+            println("Age Range: $ageRange") // Imprime la categoría convertida en rango de años
+
+            val (startYear, endYear) = getYearRangeFromCategory(ageRange)
+            println("Start Year: $startYear, End Year: $endYear") // Imprime el inicio y fin del rango de años
+
+            val currentYear = Year.now().value
+            val startBirthYear = currentYear - endYear
+            val endBirthYear = currentYear - startYear
+            println("Birth Year Range: $startBirthYear-$endBirthYear") // Imprime el rango de años de nacimiento
+
+            viewModel.getAnimalsByBirthYearRange(startBirthYear.toString().takeLast(4), endBirthYear.toString().takeLast(4)).collectAsState(emptyList()).value
         } else {
             viewModel.getAllAnimals().collectAsState(emptyList()).value
         }
@@ -182,9 +193,8 @@ fun AnimalsGallery(
             viewModel.getAllAnimals().collectAsState(emptyList()).value
         }
 
-        val filteredAnimals = animalsByAge.intersect(animalsByBreed.toSet()).intersect(animalsByType.toSet())
-        println("filteredAnimals: ${filteredAnimals}")
-        val columns = 2 // Número de columnas en el grid
+        val filteredAnimals = animalsByAgeCategory.intersect(animalsByBreed.toSet()).intersect(animalsByType.toSet())
+        val columns = 2
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
@@ -197,7 +207,9 @@ fun AnimalsGallery(
                 animal?.let { animal ->
                     AnimalCard(
                         animal = animal,
-                        navController = navController
+                        navController = navController,
+                        viewModel = viewModel,
+                        userViewModel = userViewModel
                     )
                 }
             }
@@ -212,18 +224,48 @@ fun ClearFilterIconButton(
     selectedOption: String
 ) {
     if (selectedOption.isNotBlank()) {
-        IconButton(
-            onClick = {
-                println("Clear filter clicked")
-                onClick()
-                onOptionSelected("")
-            },
+        Box(
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = 10.dp)
                 .offset(x = (-16).dp)
+                .clickable {
+                    onClick()
+                    onOptionSelected("")
+                }
         ) {
-            Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+            Text(
+                text = "x",
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+            )
         }
+    }
+}
+
+@Composable
+fun TextWithSplit(text: String, color: Color) {
+    val texto = if (text.isBlank()) "Texto Vacío" else text
+    val espacioIndex = texto.indexOf(' ')
+
+    if (espacioIndex != -1) {
+        val primeraParte = texto.substring(0, espacioIndex)
+        val segundaParte = texto.substring(espacioIndex + 1)
+
+        Column {
+            Text(
+                text = primeraParte,
+                color = color,
+            )
+            Text(
+                text = segundaParte,
+                color = color
+            )
+        }
+    } else {
+        Text(
+            text = texto,
+            color = color
+        )
     }
 }
 
@@ -239,23 +281,22 @@ fun DropdownButton(
     viewModel: AnimalViewModel,
     originalText: String,
     color: Color,
+    aux: Boolean = false,
 ) {
     Box {
         Button(
             onClick = { onExpandedChange(!expanded) },
             modifier = Modifier
-                .height(50.dp)
                 .padding(5.dp),
             shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(Gold),
             contentPadding = PaddingValues(5.dp)
         ) {
-            Text(
+            TextWithSplit(
                 text = selectedOption.ifBlank { originalText },
                 color = color
             )
         }
-
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
@@ -265,7 +306,13 @@ fun DropdownButton(
                 .border(1.dp, Color.Black)
                 .clip(RoundedCornerShape(20.dp))
         ) {
-            options.forEachIndexed { index, option ->
+            val uniqueOptions = if (aux) {
+                val ageCategories = options.map { calculateAgeCategory(it) }.distinct()
+                ageCategories.map { it }
+            } else {
+                options.distinct()
+            }
+            uniqueOptions.forEachIndexed { index, option ->
                 if (index > 0) {
                     Divider(color = Color.Black, thickness = 1.dp)
                 }
@@ -275,15 +322,13 @@ fun DropdownButton(
                     },
                     onClick = {
                         when (text) {
-                            "Arrival year" -> {
-                                if (option.isNotBlank()) {
-                                    val year = getYearFromStringDate(option)
-                                    print(year)
-                                    viewModel.getAnimalsByAgeDesc(year)
+                            "Age range" -> {
+                                when (option) {
+                                    "Puppy", "Young", "Adult", "Senior" -> {
+                                        viewModel.getAnimalsByAgeDesc(option)
+                                    }
                                 }
                             }
-
-
                             "Breed" -> {
                                 if (option.isNotBlank()) {
                                     viewModel.getAnimalsByBreed(option)
@@ -305,18 +350,31 @@ fun DropdownButton(
     }
 }
 
-@SuppressLint("DiscouragedApi")
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("DiscouragedApi", "CoroutineCreationDuringComposition")
 @Composable
-fun AnimalCard(animal: Animal,
-               navController: NavController,
+fun AnimalCard(
+    animal: Animal,
+    navController: NavController,
+    viewModel: AnimalViewModel,
+    userViewModel: UserViewModel
 ) {
-
     var isFavorite by remember { mutableStateOf(false) }
+    val age = calculateAge(animal.birthDate)
+    val userId = userViewModel.getAuthenticatedUser()?.id
+
+    if (userId != null) {
+        userViewModel.viewModelScope.launch {
+            userViewModel.getLikedAnimals(userId).collect { likedAnimals ->
+                isFavorite = likedAnimals.any { it.id == animal.id }
+            }
+        }
+    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(0.65f)
+            .aspectRatio(0.6f)
             .padding(horizontal = 8.dp, vertical = 4.dp)
             .clickable {
                 navController.navigate(route = Routes.ANIMALINFO + "/" + animal.id)
@@ -340,17 +398,14 @@ fun AnimalCard(animal: Animal,
                     .padding(4.dp)
             ) {
                 val context = LocalContext.current
-
-                // Obtener el nombre del recurso sin la ruta
-                val resourceName = animal.photoAnimal.substringAfterLast("/")
-
-                // Obtener el ID del recurso sin la ruta
+                val photoPath = animal.photoAnimal
+                val firstImagePath = photoPath.split(", ")[0].trim()
+                val resourceName = firstImagePath.substringAfterLast("/")
                 val resourceId = context.resources.getIdentifier(
                     resourceName.replace(".jpg", ""), "drawable", context.packageName
                 )
 
                 if (resourceId != 0) {
-                    // Si se encontró el recurso, cargar la imagen
                     val painter = painterResource(id = resourceId)
                     Image(
                         painter = painter,
@@ -363,27 +418,49 @@ fun AnimalCard(animal: Animal,
                 } else {
                     Log.e("AnimalImage", "Recurso no encontrado para ${animal.photoAnimal}")
                 }
-                if (isFavorite) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.align(Alignment.TopEnd)
-                            .clickable { isFavorite = !isFavorite }
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.align(Alignment.TopEnd)
-                            .clickable { isFavorite = !isFavorite }
-                    )
+                if (userId != null) {
+                    if (isFavorite) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = null,
+                            tint = Wine,
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .clickable {
+                                    isFavorite = !isFavorite
+                                    userViewModel.viewModelScope.launch {
+                                        viewModel.removeLikedAnimal(
+                                            animalId = animal.id,
+                                            userId = userId
+                                        )
+                                    }
+                                }
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                            tint = Wine,
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .clickable {
+                                    isFavorite = !isFavorite
+                                    userViewModel.viewModelScope.launch {
+                                        viewModel.insertLikedAnimal(
+                                            animalId = animal.id,
+                                            userId = userId
+                                        )
+                                    }
+                                }
+                        )
+                    }
                 }
             }
-            Spacer(Modifier.padding(8.dp))
+            Spacer(Modifier.padding(4.dp))
             Column(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .offset(y = (-15).dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 // Texto de adopción
@@ -421,21 +498,25 @@ fun AnimalCard(animal: Animal,
                 }
 
                 Text(
+                    text = "${animal.nameAnimal}, ${buildAnAgeText(age, animal.birthDate, true)}",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Text(
                     text = animal.shortInfoAnimal,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     color = Color.Black,
+                    softWrap = true,
                     modifier = Modifier
-                        .padding(5.dp)
                         .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth()
                 )
             }
         }
     }
-}
-
-
-fun getYearFromStringDate(dateString: String): String {
-    // Extrae los primeros cuatro caracteres de la cadena (el año)
-    return dateString.take(4)
 }

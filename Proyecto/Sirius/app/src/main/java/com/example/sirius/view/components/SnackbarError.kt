@@ -1,8 +1,10 @@
 package com.example.sirius.view.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -19,7 +21,6 @@ import com.example.sirius.R
 fun CustomSnackbar(
     message: String,
     onDismiss: () -> Unit,
-    isSystemInDarkTheme: Boolean
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -29,7 +30,7 @@ fun CustomSnackbar(
                 Text(
                     text = message,
                     style = TextStyle(
-                        color = if (!isSystemInDarkTheme) Color.White else Color.Black
+                        color = if (!isSystemInDarkTheme()) Color.White else Color.Black
                     ),
                 )
             },
@@ -39,7 +40,7 @@ fun CustomSnackbar(
                     content = {
                         Text(
                             stringResource(id = R.string.close),
-                            color = if (!isSystemInDarkTheme) Color.White else Color.Black
+                            color = if (!isSystemInDarkTheme()) Color.White else Color.Black
                         )
                     }
                 )

@@ -1,33 +1,42 @@
 package com.example.sirius.view.screens
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
+import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,6 +50,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,238 +59,228 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.sirius.R
+import com.example.sirius.model.Animal
+import com.example.sirius.tools.buildAnAgeText
+import com.example.sirius.tools.calculateAge
+import com.example.sirius.tools.isPasswordValid
+import com.example.sirius.ui.theme.Green1
 import com.example.sirius.ui.theme.Orange
+import com.example.sirius.ui.theme.Wine
+import com.example.sirius.view.components.NotAvailableDialog
 import com.example.sirius.viewmodel.AnimalViewModel
 import com.example.sirius.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
-import java.time.Year
 
-@SuppressLint("DiscouragedApi")
+@SuppressLint("DiscouragedApi", "CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AnimalInfo(navController: NavController, id: Int?, viewModel: AnimalViewModel, userViewModel: UserViewModel) {
-    var user by remember { mutableStateOf(userViewModel.getAuthenticatedUser()) }
+fun AnimalInfo(
+    navController: NavController,
+    id: Int?,
+    viewModel: AnimalViewModel,
+    userViewModel: UserViewModel
+) {
+    var showDialog by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        //var isFavorite by remember { mutableStateOf(false) }
-
+        var isFavorite by remember { mutableStateOf(false) }
         val animal by viewModel.getAnimalById(id ?: 0).collectAsState(initial = null)
-        val isSystemInDarkTheme =
-            (LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        val context = LocalContext.current
+        val userId = userViewModel.getAuthenticatedUser()?.id
+
+        if (userId != null) {
+            userViewModel.viewModelScope.launch {
+                userViewModel.getLikedAnimals(userId).collect { likedAnimals ->
+                    isFavorite = likedAnimals.any { it.id == (animal?.id ?: -1) }
+                }
+            }
+        }
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight(0.75f)
-            ){
-                val animal by viewModel.getAnimalById(id ?: 0).collectAsState(initial = null)
-
-
+            LazyColumn(
+                verticalArrangement = Arrangement.Bottom
+            ) {
                 if (animal != null) {
-                    val context = LocalContext.current
-
-                    // Obtener el nombre del recurso sin la ruta
-                    val resourceName = animal!!.photoAnimal.substringAfterLast("/")
-
-                    // Obtener el ID del recurso sin la ruta
-                    val resourceId = context.resources.getIdentifier(
-                        resourceName.replace(".jpg", ""), "drawable", context.packageName
-                    )
-
-                    if (resourceId != 0) {
-                        // Si se encontró el recurso, cargar la imagen
-                        val painter = painterResource(id = resourceId)
-                        Image(
-                            painter = painter,
-                            contentDescription = animal!!.longInfoAnimal,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Log.e(
-                            "AnimalImage",
-                            "Recurso no encontrado para ${animal!!.photoAnimal}"
-                        )
-                    }
-                }
-
-                Column (
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp, bottom = 25.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
-                ){
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        // Botón sobre la imagen
-                        Button(
-                            onClick = { },
+                    val photoPaths = animal!!.photoAnimal.split(", ").map { it.trim() }
+                    item {
+                        Box(
                             modifier = Modifier
-                                .width(200.dp),
-                            colors = ButtonDefaults.buttonColors(Orange)
+                                .fillMaxSize()
+                                .background(
+                                    color = Color.White
+                                )
+                        ) {
+                            CarouselSlider(photoPaths, animal!!, context)
+                            Image(
+                                painter = painterResource(id = R.drawable.rectangle2),
+                                contentDescription = "rectangle",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.32f)
+                                    .align(Alignment.BottomStart),
+                                colorFilter = ColorFilter.tint(color = colorScheme.background),
+                            )
+                            // Botón "Adopt me"
+                            Button(
+                                onClick = { showDialog = true },
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .align(Alignment.BottomCenter)
+                                    .offset(y = (-25).dp),
+                                colors = ButtonDefaults.buttonColors(Orange)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.adopt_me),
+                                    style = TextStyle(
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight(400),
+                                        color = Color(0xFFFFFFFF),
+                                    ),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                    item {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .padding(start = 20.dp)
                         ) {
                             Text(
-                                text = "Adopt me!",
-                                style = TextStyle(
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight(400),
-                                    color = Color(0xFFFFFFFF),
-                                ),
-                                textAlign = TextAlign.Center
+                                text = animal!!.nameAnimal,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Start,
                             )
-                        }
-                        val userId = user?.id
-                        var currentFavorites: String? by remember { mutableStateOf(null) }
-                        val favorites = user?.favorites
-                        //var isFavorite = .contains(animal?.id.toString()) == true
-                        var isFavorite by remember {
-                            mutableStateOf(false)
-                        }
-
-                        if (favorites?.contains(animal?.id.toString()) == true) {
-                            isFavorite = true
-                        }
-
-                        var newFavorites = "$currentFavorites, ${animal?.id}"
-
-                        // Icono de favorito
-                        println("isFavorite")
-                        println(isFavorite)
-                        if (isFavorite) {
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier
-                                    .clickable {
-                                        // Remove the animal from favorites
-                                        userViewModel.viewModelScope.launch {
-                                            animal?.id?.let { animalId ->
-                                                user?.let { currentUser ->
-                                                    val currentFavoritesList = currentUser.favorites?.split(",")?.map { it.trim() } ?: emptyList()
-                                                    val newFavoritesList = if (isFavorite) {
-                                                        currentFavoritesList.filter { it != animal?.id.toString() }
-                                                    } else {
-                                                        currentFavoritesList + animalId
-                                                    }
-
-                                                    currentUser.favorites = newFavoritesList.joinToString(",") // Update the property
-                                                    userViewModel.updateFavorites(currentUser, newFavoritesList.joinToString(","))
-                                                    isFavorite = !isFavorite // Toggle the UI state
+                            // Icono de favorito
+                            if (userId != null) {
+                                if (isFavorite) {
+                                    Icon(
+                                        imageVector = Icons.Default.Favorite,
+                                        contentDescription = null,
+                                        tint = Wine,
+                                        modifier = Modifier
+                                            .clickable {
+                                                isFavorite = !isFavorite
+                                                userViewModel.viewModelScope.launch {
+                                                    viewModel.removeLikedAnimal(
+                                                        animalId = animal!!.id,
+                                                        userId = userId
+                                                    )
                                                 }
                                             }
-                                        }
-                                    }
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier
-                                    .clickable {
-                                        // Add the animal to favorites
-                                        userViewModel.viewModelScope.launch {
-                                            animal?.id?.let {
-                                                userId?.let { userId ->
-                                                    user?.let { currentUser ->
-                                                        println("Current Favorites: ${currentUser.favorites}")
-                                                        val newFavorites = "${currentUser.favorites}, $it"
-                                                        println("New Favorites: $newFavorites")
-                                                        currentUser.favorites = newFavorites // Update the property
-                                                        userViewModel.updateFavorites(currentUser, newFavorites)
-                                                        isFavorite = newFavorites.contains(it.toString())
-                                                        println("isFavorite after update: $isFavorite")
-                                                    }
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.FavoriteBorder,
+                                        contentDescription = null,
+                                        tint = Wine,
+                                        modifier = Modifier
+                                            .clickable {
+                                                isFavorite = !isFavorite
+                                                userViewModel.viewModelScope.launch {
+                                                    viewModel.insertLikedAnimal(
+                                                        animalId = animal!!.id,
+                                                        userId = userId
+                                                    )
                                                 }
                                             }
-                                        }
-                                    }
-                            )
+                                    )
+                                }
+                            }
                         }
                     }
-                }
-            }
-        }
-        Column (
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.rectangle),
-                contentDescription = "rectangle",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.32f),
-                colorFilter = ColorFilter.tint(color = if (!isSystemInDarkTheme) Color.White else Color.Black)
-            )
-        }
-
-        Column (
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier
-                .padding(bottom = 35.dp)
-        ) {
-            if (animal != null) {
-                Text(
-                    text = animal!!.nameAnimal,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp)
-                )
-                Text(
-                    text = animal!!.longInfoAnimal,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp)
-                )
-                val birthYear = animal!!.birthDate.substring(0, 4).toInt()
-                val currentYear = Year.now().value
-                var age = currentYear - birthYear
-                if (age == 0) {
-                    age = animal!!.birthDate.substring(6, 7).toInt()
-                    Text(
-                        text = "Age: $age months",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 20.dp)
-                    )
-                } else {
-                    Text(
-                        text = "Age: $age years",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 20.dp)
-                    )
-                }
-
-                IconButton(
-                    onClick = {
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .offset(x = (-16).dp)
-                ) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = animal!!.longInfoAnimal,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 20.dp)
+                        )
+                    }
+                    val age = calculateAge(animal!!.birthDate)
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Age: ${buildAnAgeText(age, animal!!.birthDate)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp)
+                        )
+                    }
+//                    item {
+//                        IconButton(
+//                            onClick = {
+//                                navController.popBackStack()
+//                            },
+//                            modifier = Modifier
+//                                .padding(start = 8.dp)
+//                                .offset(x = (-16).dp)
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.ArrowBack,
+//                                contentDescription = null
+//                            )
+//                        }
+//                    }
                 }
             }
         }
     }
+    if (showDialog) {
+        NotAvailableDialog(
+            onDismiss = {
+                showDialog = false
+            }
+        )
+    }
+}
+
+@SuppressLint("DiscouragedApi")
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun CarouselSlider(photoPaths: List<String>, animal: Animal, context: Context) {
+    val pagerState = rememberPagerState()
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        HorizontalPager(
+            pageCount = photoPaths.size,
+            state = pagerState,
+            key = { photoPaths[it] }
+        ) { index ->
+            val resourceName = photoPaths[index].substringAfterLast("/").replace(".jpg", "")
+            val resourceId = context.resources.getIdentifier(
+                resourceName, "drawable", context.packageName
+            )
+            if(resourceId != 0) {
+                GetImage(painter = resourceId, description = animal.shortInfoAnimal)
+            } else {
+                GetImage(painter = R.drawable.image_not_found, description = animal.shortInfoAnimal)
+            }
+        }
+    }
+}
+
+@Composable
+fun GetImage(painter: Int, description: String) {
+    Image(
+        painter = painterResource(id = painter),
+        contentDescription = description,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxSize()
+    )
 }

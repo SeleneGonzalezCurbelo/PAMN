@@ -1,8 +1,11 @@
 package com.example.sirius.data.dao
 
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
 import com.example.sirius.model.News

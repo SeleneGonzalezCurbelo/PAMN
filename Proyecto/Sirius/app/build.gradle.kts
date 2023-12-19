@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp") version "1.9.0-1.0.13"
     id("org.jetbrains.kotlin.android")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
+//    id("kotlin-kapt")
 }
 
 android {
@@ -61,6 +63,12 @@ dependencies {
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
+    // Hilt
+//    implementation("com.google.dagger:hilt-android:2.x.x")
+//    kapt("com.google.dagger:hilt-android-compiler:2.x.x")
+//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+//    kapt("androidx.hilt:hilt-compiler:1.0.0-alpha03")
+
     // Nav
     implementation("androidx.navigation:navigation-compose:${rootProject.extra["nav_version"]}")
 
@@ -68,7 +76,7 @@ dependencies {
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     implementation("androidx.benchmark:benchmark-macro:1.2.0")
-    implementation("com.google.android.libraries.places:places:3.3.0")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
 
     // ViewModel
@@ -86,16 +94,22 @@ dependencies {
     //Splash
     implementation("androidx.core:core-splashscreen:1.0.1")
 
-    //Map
-    implementation("com.google.maps.android:maps-compose:1.0.0")
-    implementation("com.google.android.gms:play-services-maps:18.0.2")
-
-    //JSON
-    implementation("com.google.code.gson:gson:2.8.9")
-
     // Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${rootProject.extra["compose_version"]}")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:${rootProject.extra["compose_version"]}")
+
+    // JSON
+    implementation("com.google.code.gson:gson:2.8.9")
+
+    // Google Services & Maps
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.maps.android:maps-compose:2.9.0")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+
+    // Accompanist
+//    implementation ("com.google.accompanist:accompanist-permissions:0.31.3-beta")
 
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
