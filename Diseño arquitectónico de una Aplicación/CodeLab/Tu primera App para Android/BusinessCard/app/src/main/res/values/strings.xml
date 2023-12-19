@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">BusinessCard</string>
-    <string name="name">Selene González Curbelo</string>
-    <string name="job">Desarrolladora de Software</string>
-    <string name="number">123-456-7890</string>
-    <string name="user">\@usuario</string>
-    <string name="email">correo@example.com</string>
-</resources>
