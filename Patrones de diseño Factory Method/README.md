@@ -37,6 +37,7 @@ Este informe se centra en la estructura de clases de una aplicación diseñada p
 Se describe la relación entre clases y métodos.
 
 ### Diagrama de Clases
+![Diagrama](Images/Diagrama.png)
 
 ### Clases
 - Producto (Note):
@@ -55,6 +56,8 @@ Se describe la relación entre clases y métodos.
   - Crear nueva subclase creadora y sobrescribir Factory Method.
 - Nuevas clases
   - Subclase creadora y clase de producto específico.
+
+![NuevasClases](Images/NuevasClases.png)
 
 ## Colaboradores
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
