@@ -65,6 +65,8 @@ La aplicación móvil se enfoca en facilitar la gestión y promoción de la adop
 
 ## Diseño de la Arquitectura
 
+![Landing Page](Imagen/Diagrama.png)
+
 ## Casos de Uso
 - Caso de Uso 1: Registro de un Nuevo Usuario
 - Caso de Uso 2: Búsqueda y Visualización de Animales para Adopción
