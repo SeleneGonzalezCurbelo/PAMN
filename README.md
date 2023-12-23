@@ -41,10 +41,10 @@ Para comenzar con el proyecto, sigue estos pasos:
 
 ## Contribución
 Si deseas contribuir a este repositorio, sigue estos pasos:
-Crea una nueva rama para tus cambios: `git checkout -b feature/nueva-caracteristica`.
-Realiza tus cambios y hazles commit: `git commit -m Agregar nueva característica`.
-Sube tus cambios a tu repositorio "forked": `git push origin feature/nueva-caracteristica`.
-Crea una solicitud de extracción explicando tus cambios.
+1. Crea una nueva rama para tus cambios: `git checkout -b feature/nueva-caracteristica`.
+2. Realiza tus cambios y hazles commit: `git commit -m Agregar nueva característica`.
+3. Sube tus cambios a tu repositorio "forked": `git push origin feature/nueva-caracteristica`.
+4. Crea una solicitud de extracción explicando tus cambios.
 ¡Disfruta explorando el proyecto!
 
 ## Colaboradores
