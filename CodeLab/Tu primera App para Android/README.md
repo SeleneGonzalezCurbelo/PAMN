@@ -11,7 +11,8 @@ Dos proyectos de aplicaciones Android desarrolladas en Android Studio: una aplic
 - [Instalación](#instalación)
 - [Documentación](#documentación)
 - [Autor](#autor)
-
+- [Descargo de Responsabilidad](#descargo-de-responsabilidad)
+  
 # Tarjeta de cumpleaños
 
 La aplicación de tarjeta de cumpleaños permite a los usuarios crear y personalizar tarjetas de cumpleaños. La aplicación ofrece las siguientes características:
@@ -66,3 +67,6 @@ Para resolver este problema, se modificó el archivo `build.gradle.kts` en el di
 # Autor
 Este trabajo fue realizado como parte de un proyecto dirigido para la universidad por:
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
+
+## Descargo de Responsabilidad
+Este repositorio se desarrolla exclusivamente con fines educativos como parte de un curso universitario.
