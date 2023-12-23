@@ -7,6 +7,7 @@
   - [Componentes](#componentes)
 - [Tecnología de Base de Datos](#tecnología-de-base-de-datos)
 - [Integración de la Lógica de Persistencia](#integración-de-la-lógica-de-persistencia)
+- [Diagrama](#diagrama)
 - [Preparación para el Futuro](#preparación-para-el-futuro)
 - [Colaboradores](#colaboradores)
 - [Descargo de Responsabilidad](#descargo-de-responsabilidad)
@@ -35,6 +36,10 @@ Hemos seleccionado Room como la tecnología principal para la base de datos de n
 - Entidades: AnimalEntity y UserEntity.
 - DAOs: AnimalDao y UserDao.
 - Repositorios: AnimalRepository y UserRepository.
+
+## Diagrama
+
+![Sign Up](Imagen/Diagrama.png)
 
 ## Preparación para el Futuro
 Anticipamos desafíos si se cambia el motor de base de datos. Para minimizar el impacto, aplicamos buenas prácticas, incluyendo abstracción de la capa de persistencia, uso de interfaces y abstracciones, pruebas automatizadas y documentación detallada.
