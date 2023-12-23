@@ -26,7 +26,7 @@ A continuación, se presenta un resumen técnico de los archivos clave del códi
 - Destinations.kt: Define rutas y destinos de la aplicación.
 - Color.kt: Define constantes de colores personalizados.
 - Navbar.kt: Define la barra de navegación de la aplicación.
-![Navbar](Images/Navbar.png)
+![NavBar](Images/NavBar.png)
 - AnimalsGallery.kt, AnimalInfo.kt, DonationsScreen.kt, HomeScreen.kt, LandingPage.kt: Definen las pantallas de la aplicación.
 ![AnimalsGallery](Images/AnimalsGallery.png)
 ![AnimalInfo](Images/AnimalInfo.png)
