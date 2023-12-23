@@ -1,6 +1,6 @@
 # Diseño de interfaces
 
-#  de contenidos
+# Tabla de contenidos
 - [Wireframes y Aspectos Principales](#wireframes-y-aspectos-principales)
   - [Landing Page](#landing-page)
   - [Sign Up](#sign-up)
