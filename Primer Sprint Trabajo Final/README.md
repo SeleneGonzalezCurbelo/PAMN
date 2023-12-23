@@ -26,13 +26,13 @@ A continuación, se presenta un resumen técnico de los archivos clave del códi
 - Destinations.kt: Define rutas y destinos de la aplicación.
 - Color.kt: Define constantes de colores personalizados.
 - Navbar.kt: Define la barra de navegación de la aplicación.
-![Navbar](Imagen/Navbar.png)
+![Navbar](Images/Navbar.png)
 - AnimalsGallery.kt, AnimalInfo.kt, DonationsScreen.kt, HomeScreen.kt, LandingPage.kt: Definen las pantallas de la aplicación.
-![AnimalsGallery](Imagen/AnimalsGallery.png)
-![AnimalInfo](Imagen/AnimalInfo.png)
-![DonationsScreen](Imagen/DonationsScreen.png)
-![HomeScreen](Imagen/HomeScreen.png)
-![LandingPage](Imagen/LandingPage.png)
+![AnimalsGallery](Images/AnimalsGallery.png)
+![AnimalInfo](Images/AnimalInfo.png)
+![DonationsScreen](Images/DonationsScreen.png)
+![HomeScreen](Images/HomeScreen.png)
+![LandingPage](Images/LandingPage.png)
 - AnimalViewModel.kt, NewsViewModel.kt, UserViewModel.kt: Implementan ViewModels para la gestión de datos.
 - MainActivity.kt: Define la actividad principal de la aplicación.
 Detalles adicionales sobre cada archivo se encuentran en el informe completo.
