@@ -3,6 +3,7 @@
 ## Tabla de contenidos
 - [Introducción](#introducción)
 - [Checklist de Calidad](#checklist-de-calidad)
+- [Documentación](#documentación)
 - [Colaboradores](#colaboradores)
 - [Descargo de Responsabilidad](#descargo-de-responsabilidad)
   
@@ -31,6 +32,12 @@ Este repositorio presenta una lista de verificación para evaluar la calidad de 
 - Pruebas Automatizadas de Código
 - Seguridad del Código
 - Documentación
+
+## Documentación
+- [https://www.webiotic.com/quality-assurance-in-mobile-appdevelopment](https://www.webiotic.com/quality-assurance-in-mobile-appdevelopment/#:~:text=Quality%20assurance%2C%20also%20called%20QA,creating%20a%20smoother%20user%20experience)
+- [https://www.mygreatlearning.com/blog/mobile-testing-interview-questions-and-answers/](https://www.mygreatlearning.com/blog/mobile-testing-interview-questions-and-answers/)
+- [https://www.testscenario.com/mobile-app-testing-checklist/](https://www.testscenario.com/mobile-app-testing-checklist/)
+- José Ramón Rodríguez, Jordi García Mínguez, Ignacio Lamarca Orozco, 2007, Gestión de proyectos informáticos: métodos, herramientas y casos, Editorial UOC
 
 ## Colaboradores
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
