@@ -7,6 +7,7 @@ Este repositorio contiene los resultados de la evaluación de accesibilidad de u
 - [Observaciones](#observaciones)
 - [Documentación](#documentación)
 - [Autor](#autor)
+- [Descargo de Responsabilidad](#descargo-de-responsabilidad)
 
 # Observaciones
 - La evaluación de accesibilidad se realizó siguiendo las pautas establecidas por la WCAG.
@@ -23,3 +24,6 @@ Este repositorio contiene los resultados de la evaluación de accesibilidad de u
 # Autor
 Este trabajo fue realizado como parte de un proyecto dirigido para la universidad por:
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
+
+## Descargo de Responsabilidad
+Este repositorio se desarrolla exclusivamente con fines educativos como parte de un curso universitario.
