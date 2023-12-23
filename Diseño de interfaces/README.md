@@ -56,7 +56,7 @@ La página de animales en adopción está diseñada específicamente para que lo
 - Filtros de búsquedas
 - Listado de animales
 
-![Animals for adoption](Images/AnimalsForAdoption.png)
+![Animals for adoption](Images/AnimalsForAdopt.png)
 
 ## Animal profile
 La página del perfil del animal proporciona a los usuarios una visión detallada de un animal específico disponible para apadrinamiento o adopción. Los componentes claves de la página son:
