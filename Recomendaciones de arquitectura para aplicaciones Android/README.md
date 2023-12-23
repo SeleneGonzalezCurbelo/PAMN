@@ -2,9 +2,9 @@
 
 ## Tabla de contenidos
 - [Introducción](#introducción)
-- [Control de Dependencias: Inserción de Dependencias](#control-de-dependencias-:-inserción-de-dependencias)
-- [Convenciones de Nombres: Nombrar Métodos](#convenciones-de-nombres-:-nombrar-métodos)
-- [Capa de la IU: No Enviar Eventos del ViewModel a la IU](#capa-de-la-iu-:-no-enviar-eventos-del-viewmodel-a-la-iu)
+- [Control de Dependencias: Inserción de Dependencias](#control-de-dependencias:inserción-de-dependencias)
+- [Convenciones de Nombres: Nombrar Métodos](#convenciones-de-nombres:-nombrar-métodos)
+- [Capa de la IU: No Enviar Eventos del ViewModel a la IU](#capa-de-la-iu-:no-enviar-eventos-del-viewmodel-a-la-iu)
 - [Arquitectura en Capas: Repositorio para Exponer Datos](#arquitectura-en-capas-:-repositorio-para-exponer-datos)
 - [Arquitectura en Capas: Capa de Datos Claramente Definida](#arquitectura-en-capas-:-capa-de-datos-claramente-definida)
 - [Documentación](#documentación)
