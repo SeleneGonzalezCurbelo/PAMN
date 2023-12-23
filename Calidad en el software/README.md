@@ -34,7 +34,7 @@ Este repositorio presenta una lista de verificación para evaluar la calidad de 
 - Documentación
 
 ## Documentación
-- [[https://www.webiotic.com/quality-assurance-in-mobile-appdevelopment](https://www.webiotic.com/quality-assurance-in-mobile-app-development/#:~:text=Quality%20assurance%2C%20also%20called%20QA,creating%20a%20s)
+- [https://www.webiotic.com/quality-assurance-in-mobile-appdevelopment](https://www.webiotic.com/quality-assurance-in-mobile-app-development/#:~:text=Quality%20assurance%2C%20also%20called%20QA,creating%20a%20s)
 - [https://www.mygreatlearning.com/blog/mobile-testing-interview-questions-and-answers/](https://www.mygreatlearning.com/blog/mobile-testing-interview-questions-and-answers/)
 - [https://www.testscenario.com/mobile-app-testing-checklist/](https://www.testscenario.com/mobile-app-testing-checklist/)
 - José Ramón Rodríguez, Jordi García Mínguez, Ignacio Lamarca Orozco, 2007, Gestión de proyectos informáticos: métodos, herramientas y casos, Editorial UOC
