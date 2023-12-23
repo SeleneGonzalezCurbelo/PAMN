@@ -5,22 +5,23 @@ analizan casos que van desde una pequeña tienda online hasta una plataforma de 
 específicos en cuanto a presupuesto, tiempo de entrega, recursos humanos y rendimiento, lo que influye en la elección de la arquitectura más 
 adecuada.
 
-# Tabla de contenido
+## Tabla de contenido
 - [Estructura](#estructura)
 - [Documentación](#documentación)
 - [Autor](#autor)
+- [Descargo de Responsabilidad](#descargo-de-responsabilidad)
 
-# Estructura
+## Estructura
 
 El informe está organizado en los siguientes apartados:
 
-## Supuesto X
+### Supuesto X
   - Descripción del escenario.
   - Requisitos.
   - Recomendación de arquitectura.
   - Justificación.
 
-# Documentación
+## Documentación
 - https://es.wikipedia.org/wiki/Modelo%E2%80%93vista%E2%80%
 - https://es.wikipedia.org/wiki/Modelo%E2%80%93vista%E2%
 - https://medium.com/code-yoga/mvi-model-view-intent-pattern-in-android-98c143d1ee7c
@@ -28,6 +29,9 @@ El informe está organizado en los siguientes apartados:
 - https://dev.to/bdelespierre/how-to-implement-clean-architecture-with-laravel-2f2i
 - https://aep24.ulpgc.es/pluginfile.php/350666/mod_page/content/14/arquitectura-2023-10-1-12-21-16.pdf
 
-# Autor
+## Autor
 Este trabajo fue realizado como parte de un proyecto dirigido para la universidad por:
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
+
+## Descargo de Responsabilidad
+Este repositorio se desarrolla exclusivamente con fines educativos como parte de un curso universitario.
