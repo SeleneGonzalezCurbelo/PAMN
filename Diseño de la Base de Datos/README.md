@@ -6,7 +6,7 @@
   - [Modelos](#modelos)
   - [Componentes](#componentes)
 - [Tecnología de Base de Datos](#tecnología-de-base-de-datos)
-- [Integración de la Lógica de Persistencia](#integración-de-la-lógica-depersistencia)
+- [Integración de la Lógica de Persistencia](#integración-de-la-lógica-de-persistencia)
 - [Preparación para el Futuro](#preparación-para-el-futuro)
 - [Colaboradores](#colaboradores)
 - [Descargo de Responsabilidad](#descargo-de-responsabilidad)
