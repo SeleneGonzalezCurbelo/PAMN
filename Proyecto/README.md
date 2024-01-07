@@ -1,4 +1,4 @@
-# Reugio de Animales Sirius
+# Refugio de Animales Sirius
 Este repositorio documenta la aplicación móvil propuesta que tiene como objetivo facilitar la gestión y promoción de la adopción y patrocinio de animales de un refugio. La aplicación está diseñada para ser utilizada por trabajadores del refugio y usuarios regulares interesados en apoyar esta noble causa.
 
 ## Tabla de contenidos
@@ -19,6 +19,7 @@ Los objetivos clave de la aplicación del Refugio de Animales Sirius son los sig
 Colaboradores
 
 ## Video de la Aplicación
+https://github.com/SeleneGonzalezCurbelo/PAMN/Proyecto/Tools/Media/application_video.mp4
 
 ## Colaboradores
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
