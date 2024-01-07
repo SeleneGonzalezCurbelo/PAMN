@@ -19,7 +19,12 @@ Los objetivos clave de la aplicación del Refugio de Animales Sirius son los sig
 Colaboradores
 
 ## Video de la Aplicación
-https://github.com/SeleneGonzalezCurbelo/PAMN/blob/main/Proyecto/Tools/Media/application_video.mp4
+
+<video width="320" height="240" controls>
+  <source src="[ruta/al/video.mp4](https://github.com/SeleneGonzalezCurbelo/PAMN/blob/main/Proyecto/Tools/Media/application_video.mp4)" type="video/mp4">
+  Tu navegador no soporta el tag de video.
+</video>
+
 
 ## Colaboradores
 - [Selene](https://github.com/SeleneGonzalezCurbelo)
